@@ -1,0 +1,609 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		431B29AC2CDFE16300C07413 /* SpamoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 431B29AB2CDFE16300C07413 /* SpamoApp.swift */; };
+		431B29AE2CDFE16300C07413 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 431B29AD2CDFE16300C07413 /* ContentView.swift */; };
+		431B29B02CDFE16600C07413 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 431B29AF2CDFE16600C07413 /* Assets.xcassets */; };
+		431B29B42CDFE16600C07413 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 431B29B32CDFE16600C07413 /* Preview Assets.xcassets */; };
+		431B29BE2CDFE16600C07413 /* SpamoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 431B29BD2CDFE16600C07413 /* SpamoTests.swift */; };
+		431B29C82CDFE16600C07413 /* SpamoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 431B29C72CDFE16600C07413 /* SpamoUITests.swift */; };
+		431B29CA2CDFE16600C07413 /* SpamoUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 431B29C92CDFE16600C07413 /* SpamoUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		431B29BA2CDFE16600C07413 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 431B29A02CDFE16300C07413 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 431B29A72CDFE16300C07413;
+			remoteInfo = Spamo;
+		};
+		431B29C42CDFE16600C07413 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 431B29A02CDFE16300C07413 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 431B29A72CDFE16300C07413;
+			remoteInfo = Spamo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		431B29A82CDFE16300C07413 /* Spamo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spamo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		431B29AB2CDFE16300C07413 /* SpamoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpamoApp.swift; sourceTree = "<group>"; };
+		431B29AD2CDFE16300C07413 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		431B29AF2CDFE16600C07413 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		431B29B12CDFE16600C07413 /* Spamo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spamo.entitlements; sourceTree = "<group>"; };
+		431B29B32CDFE16600C07413 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		431B29B92CDFE16600C07413 /* SpamoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpamoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		431B29BD2CDFE16600C07413 /* SpamoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpamoTests.swift; sourceTree = "<group>"; };
+		431B29C32CDFE16600C07413 /* SpamoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpamoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		431B29C72CDFE16600C07413 /* SpamoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpamoUITests.swift; sourceTree = "<group>"; };
+		431B29C92CDFE16600C07413 /* SpamoUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpamoUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		431B29A52CDFE16300C07413 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		431B29B62CDFE16600C07413 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		431B29C02CDFE16600C07413 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		431B299F2CDFE16300C07413 = {
+			isa = PBXGroup;
+			children = (
+				431B29AA2CDFE16300C07413 /* Spamo */,
+				431B29BC2CDFE16600C07413 /* SpamoTests */,
+				431B29C62CDFE16600C07413 /* SpamoUITests */,
+				431B29A92CDFE16300C07413 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		431B29A92CDFE16300C07413 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				431B29A82CDFE16300C07413 /* Spamo.app */,
+				431B29B92CDFE16600C07413 /* SpamoTests.xctest */,
+				431B29C32CDFE16600C07413 /* SpamoUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		431B29AA2CDFE16300C07413 /* Spamo */ = {
+			isa = PBXGroup;
+			children = (
+				431B29AB2CDFE16300C07413 /* SpamoApp.swift */,
+				431B29AD2CDFE16300C07413 /* ContentView.swift */,
+				431B29AF2CDFE16600C07413 /* Assets.xcassets */,
+				431B29B12CDFE16600C07413 /* Spamo.entitlements */,
+				431B29B22CDFE16600C07413 /* Preview Content */,
+			);
+			path = Spamo;
+			sourceTree = "<group>";
+		};
+		431B29B22CDFE16600C07413 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				431B29B32CDFE16600C07413 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		431B29BC2CDFE16600C07413 /* SpamoTests */ = {
+			isa = PBXGroup;
+			children = (
+				431B29BD2CDFE16600C07413 /* SpamoTests.swift */,
+			);
+			path = SpamoTests;
+			sourceTree = "<group>";
+		};
+		431B29C62CDFE16600C07413 /* SpamoUITests */ = {
+			isa = PBXGroup;
+			children = (
+				431B29C72CDFE16600C07413 /* SpamoUITests.swift */,
+				431B29C92CDFE16600C07413 /* SpamoUITestsLaunchTests.swift */,
+			);
+			path = SpamoUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		431B29A72CDFE16300C07413 /* Spamo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 431B29CD2CDFE16600C07413 /* Build configuration list for PBXNativeTarget "Spamo" */;
+			buildPhases = (
+				431B29A42CDFE16300C07413 /* Sources */,
+				431B29A52CDFE16300C07413 /* Frameworks */,
+				431B29A62CDFE16300C07413 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Spamo;
+			productName = Spamo;
+			productReference = 431B29A82CDFE16300C07413 /* Spamo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		431B29B82CDFE16600C07413 /* SpamoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 431B29D02CDFE16600C07413 /* Build configuration list for PBXNativeTarget "SpamoTests" */;
+			buildPhases = (
+				431B29B52CDFE16600C07413 /* Sources */,
+				431B29B62CDFE16600C07413 /* Frameworks */,
+				431B29B72CDFE16600C07413 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				431B29BB2CDFE16600C07413 /* PBXTargetDependency */,
+			);
+			name = SpamoTests;
+			productName = SpamoTests;
+			productReference = 431B29B92CDFE16600C07413 /* SpamoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		431B29C22CDFE16600C07413 /* SpamoUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 431B29D32CDFE16600C07413 /* Build configuration list for PBXNativeTarget "SpamoUITests" */;
+			buildPhases = (
+				431B29BF2CDFE16600C07413 /* Sources */,
+				431B29C02CDFE16600C07413 /* Frameworks */,
+				431B29C12CDFE16600C07413 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				431B29C52CDFE16600C07413 /* PBXTargetDependency */,
+			);
+			name = SpamoUITests;
+			productName = SpamoUITests;
+			productReference = 431B29C32CDFE16600C07413 /* SpamoUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		431B29A02CDFE16300C07413 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1410;
+				LastUpgradeCheck = 1410;
+				TargetAttributes = {
+					431B29A72CDFE16300C07413 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					431B29B82CDFE16600C07413 = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = 431B29A72CDFE16300C07413;
+					};
+					431B29C22CDFE16600C07413 = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = 431B29A72CDFE16300C07413;
+					};
+				};
+			};
+			buildConfigurationList = 431B29A32CDFE16300C07413 /* Build configuration list for PBXProject "Spamo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 431B299F2CDFE16300C07413;
+			productRefGroup = 431B29A92CDFE16300C07413 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				431B29A72CDFE16300C07413 /* Spamo */,
+				431B29B82CDFE16600C07413 /* SpamoTests */,
+				431B29C22CDFE16600C07413 /* SpamoUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		431B29A62CDFE16300C07413 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				431B29B42CDFE16600C07413 /* Preview Assets.xcassets in Resources */,
+				431B29B02CDFE16600C07413 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		431B29B72CDFE16600C07413 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		431B29C12CDFE16600C07413 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		431B29A42CDFE16300C07413 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				431B29AE2CDFE16300C07413 /* ContentView.swift in Sources */,
+				431B29AC2CDFE16300C07413 /* SpamoApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		431B29B52CDFE16600C07413 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				431B29BE2CDFE16600C07413 /* SpamoTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		431B29BF2CDFE16600C07413 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				431B29C82CDFE16600C07413 /* SpamoUITests.swift in Sources */,
+				431B29CA2CDFE16600C07413 /* SpamoUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		431B29BB2CDFE16600C07413 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 431B29A72CDFE16300C07413 /* Spamo */;
+			targetProxy = 431B29BA2CDFE16600C07413 /* PBXContainerItemProxy */;
+		};
+		431B29C52CDFE16600C07413 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 431B29A72CDFE16300C07413 /* Spamo */;
+			targetProxy = 431B29C42CDFE16600C07413 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		431B29CB2CDFE16600C07413 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		431B29CC2CDFE16600C07413 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		431B29CE2CDFE16600C07413 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Spamo/Spamo.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Spamo/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cybug.Spamo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		431B29CF2CDFE16600C07413 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Spamo/Spamo.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Spamo/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cybug.Spamo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		431B29D12CDFE16600C07413 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cybug.SpamoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Spamo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Spamo";
+			};
+			name = Debug;
+		};
+		431B29D22CDFE16600C07413 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cybug.SpamoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Spamo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Spamo";
+			};
+			name = Release;
+		};
+		431B29D42CDFE16600C07413 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cybug.SpamoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Spamo;
+			};
+			name = Debug;
+		};
+		431B29D52CDFE16600C07413 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cybug.SpamoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Spamo;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		431B29A32CDFE16300C07413 /* Build configuration list for PBXProject "Spamo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				431B29CB2CDFE16600C07413 /* Debug */,
+				431B29CC2CDFE16600C07413 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		431B29CD2CDFE16600C07413 /* Build configuration list for PBXNativeTarget "Spamo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				431B29CE2CDFE16600C07413 /* Debug */,
+				431B29CF2CDFE16600C07413 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		431B29D02CDFE16600C07413 /* Build configuration list for PBXNativeTarget "SpamoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				431B29D12CDFE16600C07413 /* Debug */,
+				431B29D22CDFE16600C07413 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		431B29D32CDFE16600C07413 /* Build configuration list for PBXNativeTarget "SpamoUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				431B29D42CDFE16600C07413 /* Debug */,
+				431B29D52CDFE16600C07413 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 431B29A02CDFE16300C07413 /* Project object */;
+}
