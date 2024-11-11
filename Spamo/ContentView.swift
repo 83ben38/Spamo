@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 struct ContentView: View {
     @State private var gameStarted = false
     var body: some View{
@@ -223,9 +222,8 @@ struct ContentView: View {
             let normalY : CGFloat = bossPos.y+bossSize.height/2
             for index in 0..<4{
                 let newX : CGFloat = bossSize.width*CGFloat(index)/3
-                var missile = BossMissile(position: CGPoint(x:normalX+newX,y:normalY), missileId: 1)
+                let missile = BossMissile(position: CGPoint(x:normalX+newX,y:normalY), missileId: 1, movementMethod: "Forward")
                 bossMissiles.append(missile)
-                moveMissileDown(missile:missile, speed:400.0)
             }
         }
         return timeToRun
@@ -233,17 +231,7 @@ struct ContentView: View {
     
     
     
-    func moveMissileDown(missile: BossMissile, speed: CGFloat){
-        var missile2 = missile;
-        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
-            timer in
-            missile2.position.y += speed * delay
-            if (missile2.position.y > UIScreen.main.bounds.height+100){
-                bossMissiles.remove(at: bossMissiles.firstIndex(of: missile2)!)
-                timer.invalidate()
-            }
-        }
-    }
+
     //boss health bar
     @State private var bossHealth = 50.0
     @State private var bossMaxHealth = 50.0
@@ -267,9 +255,19 @@ struct ContentView: View {
         var position: CGPoint
         var size: CGSize = CGSize(width: 20, height: 75)
         var missileId: Int
-        var rotation: CGFloat = 0
+        var rotation: CGFloat = 45
+        var movementMethod: String
+        var missileSpeed = 400.0
     }
     @State private var bossMissiles:[BossMissile] = []
+    func runMissileMovements(){
+        for index in bossMissiles.indices.reversed() {
+            if (bossMissiles[index].movementMethod == "Forward"){
+                bossMissiles[index].position.y -= cos(missiles[index].rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
+                bossMissiles[index].position.x -= sin(missiles[index].rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
+            }
+        }
+    }
     
     //game
     var game: some View {
