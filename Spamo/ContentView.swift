@@ -88,9 +88,14 @@ struct ContentView: View {
     
     //character
     @State private var pos: CGPoint = CGPoint(x:200,y:400)
+    @State private var mousePos : CGPoint = CGPoint(x:200,y:400)
     @State private var playerSize = CGSize(width:56,height:90)
     @State private var damageCooldown = 0.0;
     func checkForCollisions(){
+        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+            _ in
+            pos = CGPoint(x:(3*pos.x+mousePos.x)/4,y:(3*pos.y+mousePos.y)/4)
+        }
         Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
             _ in
             damageCooldown -= delay;
@@ -187,7 +192,7 @@ struct ContentView: View {
         }
     }
     //boss attacks
-    private let attackCooldown = 3.0
+    private let attackCooldown = 2.0
     func runBossAttacks(){
         Timer.scheduledTimer(withTimeInterval: attackCooldown, repeats: false){
             _ in
@@ -212,9 +217,21 @@ struct ContentView: View {
     
     func runBoss1Attack1() -> CGFloat{
         let goalPos : CGFloat = CGFloat.random(in:bossSize.width/2...UIScreen.main.bounds.width-bossSize.width/2)
-        let timeToRun : CGFloat = abs(bossPos.x-goalPos)/100.0
-        withAnimation(Animation.linear(duration: timeToRun)){
-            bossPos.x = goalPos
+        let timeToRun : CGFloat = abs(bossPos.x-goalPos)/100
+        var time : CGFloat = 0
+        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+            timer in
+            time += delay
+            if (goalPos > bossPos.x){
+                bossPos.x+=100*delay
+            }
+            else{
+                bossPos.x-=100*delay
+            }
+            if (time >= timeToRun){
+                timer.invalidate()
+                bossPos.x = goalPos
+            }
         }
         Timer.scheduledTimer(withTimeInterval: timeToRun, repeats: false){
             _ in
@@ -222,7 +239,7 @@ struct ContentView: View {
             let normalY : CGFloat = bossPos.y+bossSize.height/2
             for index in 0..<4{
                 let newX : CGFloat = bossSize.width*CGFloat(index)/3
-                let missile = BossMissile(position: CGPoint(x:normalX+newX,y:normalY), missileId: 1, movementMethod: "Forward")
+                let missile = BossMissile(position: CGPoint(x:normalX+newX,y:normalY), missileId: 1, rotation: 0, movementMethod: "Forward", missileSpeed: 400.0)
                 bossMissiles.append(missile)
             }
         }
@@ -255,20 +272,25 @@ struct ContentView: View {
         var position: CGPoint
         var size: CGSize = CGSize(width: 20, height: 75)
         var missileId: Int
-        var rotation: CGFloat = 45
+        var rotation: CGFloat
         var movementMethod: String
-        var missileSpeed = 400.0
+        var missileSpeed: CGFloat
     }
     @State private var bossMissiles:[BossMissile] = []
     func runMissileMovements(){
         for index in bossMissiles.indices.reversed() {
             if (bossMissiles[index].movementMethod == "Forward"){
-                bossMissiles[index].position.y -= cos(missiles[index].rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
-                bossMissiles[index].position.x -= sin(missiles[index].rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
+                bossMissiles[index].position.y += cos(bossMissiles[index].rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
+                bossMissiles[index].position.x -= sin(bossMissiles[index].rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
             }
         }
     }
-    
+    func runMissileLoop(){
+        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+            _ in
+            runMissileMovements()
+        }
+    }
     //game
     var game: some View {
         ZStack{
@@ -284,14 +306,12 @@ struct ContentView: View {
                 missile in
                 Image("BossMissile"+String(missile.missileId)).rotationEffect(.degrees(missile.rotation)).frame(width:missile.size.width,height:missile.size.height).position(missile.position).onAppear{}
             }
-            Image("Boss"+String(bossNum)).resizable().frame(width:bossSize.width,height:bossSize.height).position(bossPos).onAppear{runBossAttacks()}
+            Image("Boss"+String(bossNum)).resizable().frame(width:bossSize.width,height:bossSize.height).position(bossPos).onAppear{runBossAttacks();runMissileLoop()}
         }
         .gesture(DragGesture(minimumDistance: 0)
             .onChanged{
             value in
-            withAnimation(.easeInOut(duration: 0.5)){
-                pos = value.location
-            }
+            mousePos = value.location
         }
         )
     }
