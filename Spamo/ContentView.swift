@@ -111,15 +111,17 @@ struct ContentView: View {
                     return
                 }
                 for missile in bossMissiles{
-                    let missileRect = CGRect(origin: missile.position, size: missile.size).offsetBy(dx: -missile.size.width/2, dy: -missile.size.height/2)
-                    if (playerRect.intersects(missileRect)){
-                        playerHealth-=1;
-                        if (playerHealth == 0.0){
-                            gameStarted = false;
+                    if (missile.movementMethod != "Ghost"){
+                        let missileRect = CGRect(origin: missile.position, size: missile.size).offsetBy(dx: -missile.size.width/2, dy: -missile.size.height/2)
+                        if (playerRect.intersects(missileRect)){
+                            playerHealth-=1;
+                            if (playerHealth == 0.0){
+                                gameStarted = false;
+                            }
+                            damageCooldown = 1.0
+                            bossMissiles.remove(at: bossMissiles.firstIndex(of:missile)!)
+                            return
                         }
-                        damageCooldown = 1.0
-                        bossMissiles.remove(at: bossMissiles.firstIndex(of:missile)!)
-                        return
                     }
                 }
             }
@@ -184,13 +186,18 @@ struct ContentView: View {
     }
     
     //bosses
-    @State private var bossNum = 1
+    @State private var bossNum = 2
     @State private var bossPos: CGPoint = CGPoint(x:UIScreen.main.bounds.width/2,y:100)
     @State private var bossSize = CGSize(width:150,height:65)
     func resetBoss(){
         bossPos = CGPoint(x:UIScreen.main.bounds.width/2,y:100)
         if (bossNum == 1){
             bossSize = CGSize(width:150,height:65)
+            bossHealth = 50.0
+            bossMaxHealth = 50.0
+        }
+        if (bossNum == 2){
+            bossSize = CGSize(width:185,height:125)
             bossHealth = 50.0
             bossMaxHealth = 50.0
         }
@@ -211,29 +218,33 @@ struct ContentView: View {
     }
     func runBossAttack() -> CGFloat{
         if (bossNum == 1){
-            let bossAttackNum = Int.random(in: 1...2)
+            let bossAttackNum = Int.random(in: 1...3)
             if (bossAttackNum == 1){
                 return runBoss1Attack1()
             }
             if (bossAttackNum == 2){
                 return runBoss1Attack2()
             }
+            if (bossAttackNum == 3){
+                return runBoss1Attack3()
+            }
+        }
+        if (bossNum == 2){
+            let bossAttackNum = Int.random(in: 3...3)
+            if(bossAttackNum == 1){
+                return runBoss2Attack1()
+            }
+            if (bossAttackNum == 2){
+                return runBoss2Attack2()
+            }
+            if (bossAttackNum == 3){
+                return runBoss2Attack3()
+            }
+            if (bossAttackNum == 4){
+                return runBoss1Attack2()
+            }
         }
         return 0.0
-    }
-    func runBoss1Attack2() -> CGFloat{
-        for index in 0...((Int(UIScreen.main.bounds.height)-100)/100){
-            let newY : CGFloat = CGFloat(index * 100 + 100)
-            let missile = BossMissile(position: CGPoint(x:CGFloat(((index+1)%2))*UIScreen.main.bounds.width,y:newY),size: CGSize(width:75,height:20), missileId: 1, rotation: CGFloat(90 + (index%2)*180), movementMethod: "Ghost", missileSpeed: 200.0, transparency: 0.5)
-            let index = bossMissiles.endIndex
-            Timer.scheduledTimer(withTimeInterval: 1, repeats: false){
-                _ in
-                bossMissiles[index].movementMethod = "Forward"
-                bossMissiles[index].transparency = 1
-            }
-            bossMissiles.append(missile)
-        }
-        return UIScreen.main.bounds.width/200 + 1
     }
     func runBoss1Attack1() -> CGFloat{
         let goalPos : CGFloat = CGFloat.random(in:bossSize.width/2...UIScreen.main.bounds.width-bossSize.width/2)
@@ -265,8 +276,141 @@ struct ContentView: View {
         }
         return timeToRun
     }
-    
-    
+    func runBoss1Attack2() -> CGFloat{
+        for index in 0...((Int(UIScreen.main.bounds.height)-100)/100){
+            let newY : CGFloat = CGFloat(index * 100 + 100)
+            let missile = BossMissile(position: CGPoint(x:CGFloat(((index+1)%2))*UIScreen.main.bounds.width,y:newY),size: CGSize(width:75,height:20), missileId: 1, rotation: CGFloat(90 + (index%2)*180), movementMethod: "Ghost", missileSpeed: 200.0, transparency: 0.5)
+            bossMissiles.append(missile)
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: false){_ in
+                for index in bossMissiles.indices{
+                    if (bossMissiles[index] == missile){
+                        bossMissiles[index].movementMethod = "Forward"
+                        bossMissiles[index].transparency = 1
+                        break
+                    }
+                }
+            }
+        }
+        return UIScreen.main.bounds.width/200 + 1
+    }
+    func runBoss1Attack3() -> CGFloat{
+        for index in 0..<3{
+            Timer.scheduledTimer(withTimeInterval: CGFloat(index), repeats: false){
+                _ in
+                let atanValue = atan(Double((pos.x-bossPos.x)/(pos.y-bossPos.y)))*180/Double.pi
+                let missile = BossMissile(position: bossPos,size: CGSize(width:75,height:20), missileId: 1, rotation: -atanValue, movementMethod: "Bouncing"+String(3-index), missileSpeed: 300.0)
+                bossMissiles.append(missile)
+            }
+        }
+        return 3.0+UIScreen.main.bounds.height/300
+    }
+    func runBoss2Attack1() -> CGFloat{
+        let goalPos : CGFloat = CGFloat.random(in:bossSize.width/2...UIScreen.main.bounds.width-bossSize.width/2)
+        let timeToRun : CGFloat = abs(bossPos.x-goalPos)/100
+        var time : CGFloat = 0
+        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+            timer in
+            time += delay
+            if (goalPos > bossPos.x){
+                bossPos.x+=100*delay
+            }
+            else{
+                bossPos.x-=100*delay
+            }
+            if (time >= timeToRun){
+                timer.invalidate()
+                bossPos.x = goalPos
+            }
+        }
+        Timer.scheduledTimer(withTimeInterval: timeToRun, repeats: false){
+            _ in
+            let normalX : CGFloat = bossPos.x-bossSize.width/2
+            let normalY : CGFloat = bossPos.y+bossSize.height/2
+            for index in 0..<3{
+                let newX : CGFloat = bossSize.width*CGFloat(index)/4
+                let missile = BossMissile(position: CGPoint(x:normalX+newX,y:normalY), missileId: 1, rotation: 0, movementMethod: "Forward", missileSpeed: 400.0)
+                bossMissiles.append(missile)
+            }
+        }
+        Timer.scheduledTimer(withTimeInterval: timeToRun+((playerSize.height+75)/300), repeats: false){
+            _ in
+            let normalX : CGFloat = bossPos.x-bossSize.width/2
+            let normalY : CGFloat = bossPos.y+bossSize.height/2
+            for index in 2..<5{
+                let newX : CGFloat = bossSize.width*CGFloat(index)/4
+                let missile = BossMissile(position: CGPoint(x:normalX+newX,y:normalY), missileId: 1, rotation: 0, movementMethod: "Forward", missileSpeed: 400.0)
+                bossMissiles.append(missile)
+            }
+        }
+        return timeToRun+((playerSize.height+75)/300)
+    }
+    func runBoss2Attack2() -> CGFloat{
+        for index in 0..<9{
+            Timer.scheduledTimer(withTimeInterval: CGFloat(Double(index)/3.0), repeats: false){
+                _ in
+                var pos2: CGPoint
+                var bounces: Bool
+                if (index%3==0){
+                    pos2 = CGPoint(x: -pos.x, y: pos.y)
+                    bounces = true;
+                }
+                else if (index%3==1){
+                    pos2 = pos
+                    bounces = false
+                }
+                else{
+                    pos2 = CGPoint(x: (UIScreen.main.bounds.width*2)-pos.x, y: pos.y)
+                    bounces = true;
+                }
+                let atanValue = atan(Double((pos2.x-bossPos.x)/(pos2.y-bossPos.y)))*180/Double.pi
+                let missile = BossMissile(position: bossPos,size: CGSize(width:75,height:20), missileId: 1, rotation: -atanValue, movementMethod: bounces ? "Bouncing1" : "Forward", missileSpeed: 300.0)
+                bossMissiles.append(missile)
+            }
+        }
+        return 3.0+UIScreen.main.bounds.height/300
+    }
+    func runBoss2Attack3() -> CGFloat{
+        for index in 0...3{
+            Timer.scheduledTimer(withTimeInterval: 1.5*Double(index), repeats: false){
+                _ in
+                let missile1 = BossMissile(position: CGPoint(x:10,y:pos.y),size: CGSize(width:75,height:20), missileId: 1, rotation: -90, movementMethod: "Ghost", missileSpeed: 400.0, transparency: 0.5)
+                let missile2 = BossMissile(position: CGPoint(x:pos.x,y:UIScreen.main.bounds.height-20),size: CGSize(width:75,height:20), missileId: 1, rotation: 180, movementMethod: "Ghost", missileSpeed: 400.0, transparency: 0.5)
+                let pos2 = CGPoint(x:CGFloat.random(in: 10...UIScreen.main.bounds.width-10),y:CGFloat.random(in: 50...UIScreen.main.bounds.height-20))
+                var atanValue = atan(Double((pos.x-pos2.x)/(pos.y-pos2.y)))*180/Double.pi
+                if (pos2.y > pos.y){
+                    atanValue+=180
+                }
+                let missile3 = BossMissile(position: pos2,size: CGSize(width:75,height:20), missileId: 1, rotation: -atanValue, movementMethod: "Ghost", missileSpeed: 400.0, transparency: 0.5)
+                bossMissiles.append(missile1)
+                bossMissiles.append(missile2)
+                bossMissiles.append(missile3)
+                Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false){_ in
+                    for index in bossMissiles.indices{
+                        if (bossMissiles[index] == missile1){
+                            bossMissiles[index].movementMethod = "Forward"
+                            bossMissiles[index].transparency = 1
+                            break
+                        }
+                    }
+                    for index in bossMissiles.indices{
+                        if (bossMissiles[index] == missile2){
+                            bossMissiles[index].movementMethod = "Forward"
+                            bossMissiles[index].transparency = 1
+                            break
+                        }
+                    }
+                    for index in bossMissiles.indices{
+                        if (bossMissiles[index] == missile3){
+                            bossMissiles[index].movementMethod = "Forward"
+                            bossMissiles[index].transparency = 1
+                            break
+                        }
+                    }
+                }
+            }
+        }
+        return 6
+    }
     
 
     //boss health bar
@@ -295,6 +439,9 @@ struct ContentView: View {
         var movementMethod: String
         var missileSpeed: CGFloat
         var transparency: Double = 1
+        static func == (lhs: BossMissile, rhs: BossMissile) -> Bool{
+            return lhs.position == rhs.position && lhs.size == rhs.size && rhs.missileId == lhs.missileId && lhs.rotation == rhs.rotation && rhs.movementMethod == lhs.movementMethod && rhs.missileSpeed == lhs.missileSpeed && rhs.transparency == lhs.transparency
+        }
     }
     @State private var bossMissiles:[BossMissile] = []
     func runMissileMovements(){
@@ -302,6 +449,31 @@ struct ContentView: View {
             if (bossMissiles[index].movementMethod == "Forward"){
                 bossMissiles[index].position.y += cos(bossMissiles[index].rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
                 bossMissiles[index].position.x -= sin(bossMissiles[index].rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
+                if(bossMissiles[index].position.x < -bossMissiles[index].size.width || bossMissiles[index].position.x > UIScreen.main.bounds.width+bossMissiles[index].size.width || bossMissiles[index].position.y < -bossMissiles[index].size.height || bossMissiles[index].position.y > UIScreen.main.bounds.height+bossMissiles[index].size.height){
+                    bossMissiles.remove(at: index)
+                }
+            }
+            else if (bossMissiles[index].movementMethod.starts(with: "Bouncing")){
+                bossMissiles[index].position.y += cos(bossMissiles[index].rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
+                bossMissiles[index].position.x -= sin(bossMissiles[index].rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
+                var bounce = false
+                if(bossMissiles[index].position.x < bossMissiles[index].size.width/2 || bossMissiles[index].position.x > UIScreen.main.bounds.width-bossMissiles[index].size.width/2){
+                    bounce = true
+                    bossMissiles[index].rotation = -bossMissiles[index].rotation
+                }
+                if(bossMissiles[index].position.y < bossMissiles[index].size.height/2 || bossMissiles[index].position.y > UIScreen.main.bounds.height-bossMissiles[index].size.height/2){
+                    bounce = true
+                    bossMissiles[index].rotation = 180-bossMissiles[index].rotation
+                }
+                if (bounce){
+                    let num = Int(bossMissiles[index].movementMethod.suffix(from: bossMissiles[index].movementMethod.index(bossMissiles[index].movementMethod.startIndex, offsetBy: 8)))
+                    if (num == 1){
+                        bossMissiles[index].movementMethod = "Forward"
+                    }
+                    else{
+                        bossMissiles[index].movementMethod = "Bouncing" + String(num!-1)
+                    }
+                }
             }
         }
     }
@@ -315,9 +487,9 @@ struct ContentView: View {
     var game: some View {
         ZStack{
             background
-            bossHealthBar.position(x:UIScreen.main.bounds.width/2,y:50)
+            bossHealthBar.position(x:UIScreen.main.bounds.width/2,y:25)
             playerHealthBar.position(x:UIScreen.main.bounds.width/2,y:UIScreen.main.bounds.height-100)
-            Image("Character").resizable().frame(width:playerSize.width,height:playerSize.height).position(pos).onAppear{shoot();checkForCollisions()}
+            Image("Character").resizable().frame(width:playerSize.width,height:playerSize.height).position(pos).onAppear{shoot();checkForCollisions();resetBoss()}
             ForEach(missiles){
                 missile in
                 Image("missile").resizable().rotationEffect(.degrees(missile.rotation)).frame(width:missile.size.width,height:missile.size.height).position(missile.position).onAppear{}
