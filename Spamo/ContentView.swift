@@ -170,6 +170,10 @@ struct ContentView: View {
             if (missileRect.intersects(bossRect)){
                 missiles.remove(at: index)
                 bossHealth-=missileDamage
+                if (bossHealth <= 0){
+                    bossNum+=1;
+                    resetBoss()
+                }
             }
             else if missiles[index].position.y > -100 {
                 missiles[index].position.y -= missileSpeed * delay
@@ -207,14 +211,30 @@ struct ContentView: View {
     }
     func runBossAttack() -> CGFloat{
         if (bossNum == 1){
-            let bossAttackNum = CGFloat.random(in: 1...1)
+            let bossAttackNum = Int.random(in: 1...2)
             if (bossAttackNum == 1){
                 return runBoss1Attack1()
+            }
+            if (bossAttackNum == 2){
+                return runBoss1Attack2()
             }
         }
         return 0.0
     }
-    
+    func runBoss1Attack2() -> CGFloat{
+        for index in 0...((Int(UIScreen.main.bounds.height)-100)/100){
+            let newY : CGFloat = CGFloat(index * 100 + 100)
+            let missile = BossMissile(position: CGPoint(x:CGFloat(((index+1)%2))*UIScreen.main.bounds.width,y:newY),size: CGSize(width:75,height:20), missileId: 1, rotation: CGFloat(90 + (index%2)*180), movementMethod: "Ghost", missileSpeed: 200.0, transparency: 0.5)
+            let index = bossMissiles.endIndex
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: false){
+                _ in
+                bossMissiles[index].movementMethod = "Forward"
+                bossMissiles[index].transparency = 1
+            }
+            bossMissiles.append(missile)
+        }
+        return UIScreen.main.bounds.width/200 + 1
+    }
     func runBoss1Attack1() -> CGFloat{
         let goalPos : CGFloat = CGFloat.random(in:bossSize.width/2...UIScreen.main.bounds.width-bossSize.width/2)
         let timeToRun : CGFloat = abs(bossPos.x-goalPos)/100
@@ -265,7 +285,6 @@ struct ContentView: View {
                 }
                 .padding(.horizontal)
     }
-    
     //boss missiles
     struct BossMissile: Identifiable, Equatable{
         let id = UUID()
@@ -275,6 +294,7 @@ struct ContentView: View {
         var rotation: CGFloat
         var movementMethod: String
         var missileSpeed: CGFloat
+        var transparency: Double = 1
     }
     @State private var bossMissiles:[BossMissile] = []
     func runMissileMovements(){
@@ -304,7 +324,7 @@ struct ContentView: View {
             }
             ForEach(bossMissiles){
                 missile in
-                Image("BossMissile"+String(missile.missileId)).rotationEffect(.degrees(missile.rotation)).frame(width:missile.size.width,height:missile.size.height).position(missile.position).onAppear{}
+                Image("BossMissile"+String(missile.missileId)).rotationEffect(.degrees(missile.rotation)).frame(width:missile.size.width,height:missile.size.height).position(missile.position).opacity(missile.transparency).onAppear{}
             }
             Image("Boss"+String(bossNum)).resizable().frame(width:bossSize.width,height:bossSize.height).position(bossPos).onAppear{runBossAttacks();runMissileLoop()}
         }
