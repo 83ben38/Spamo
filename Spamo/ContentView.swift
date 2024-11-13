@@ -7,6 +7,7 @@
 
 import SwiftUI
 struct ContentView: View {
+    @State public var loopingTimers : [Timer] = []
     @State private var gameStarted = false
     var body: some View{
         ZStack{
@@ -20,6 +21,10 @@ struct ContentView: View {
         }
     }
     
+    @State var difficultyNum = 2
+    @State var difficultyText = "Medium"
+    @State var difficultyColor = Color.yellow
+    
     //title screen
     var titleScreen: some View{
         VStack {
@@ -29,7 +34,40 @@ struct ContentView: View {
                 .padding()
 
             Button(action: {
+                difficultyNum+=1
+                if (difficultyNum > 4){
+                    difficultyNum = 1
+                }
+                if (difficultyNum == 1){
+                    difficultyText = "Easy"
+                    difficultyColor = Color.green
+                }
+                if (difficultyNum == 2){
+                    difficultyText = "Medium"
+                    difficultyColor = Color.yellow
+                }
+                if (difficultyNum == 3){
+                    difficultyText = "Hard"
+                    difficultyColor = Color.orange
+                }
+                if (difficultyNum == 4){
+                    difficultyText = "Impossible"
+                    difficultyColor = Color.red
+                }
+            }){
+                Text(difficultyText)
+                    .font(.title)
+                    .padding()
+                    .background(difficultyColor)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            
+            Button(action: {
             // Start the game by changing the state variable
+                attackCooldown = 4.0-Double(difficultyNum)
+                playerHealth = 9.0-Double(difficultyNum*2)
+                playerMaxHealth = 9.0-Double(difficultyNum*2)
                 gameStarted = true
             }) {
             Text("Start")
@@ -92,11 +130,16 @@ struct ContentView: View {
     @State private var playerSize = CGSize(width:56,height:90)
     @State private var damageCooldown = 0.0;
     func checkForCollisions(){
-        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+        bossNum = 1
+        pos = CGPoint(x:200,y:400)
+        mousePos = CGPoint(x:200,y:400)
+        playerSize = CGSize(width:56,height:90)
+        damageCooldown = 0.0
+        loopingTimers.append(Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
             _ in
             pos = CGPoint(x:(3*pos.x+mousePos.x)/4,y:(3*pos.y+mousePos.y)/4)
-        }
-        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+        })
+        loopingTimers.append(Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
             _ in
             damageCooldown -= delay;
             if (damageCooldown <= 0.0){
@@ -105,7 +148,10 @@ struct ContentView: View {
                 if playerRect.intersects(bossRect){
                     playerHealth-=1;
                     if (playerHealth == 0.0){
-                        gameStarted = false;
+                        for timer in loopingTimers{
+                            timer.invalidate()
+                        }
+                        gameStarted = false
                     }
                     damageCooldown = 1.0
                     return
@@ -116,7 +162,10 @@ struct ContentView: View {
                         if (playerRect.intersects(missileRect)){
                             playerHealth-=1;
                             if (playerHealth == 0.0){
-                                gameStarted = false;
+                                for timer in loopingTimers{
+                                    timer.invalidate()
+                                }
+                                gameStarted = false
                             }
                             damageCooldown = 1.0
                             bossMissiles.remove(at: bossMissiles.firstIndex(of:missile)!)
@@ -125,7 +174,7 @@ struct ContentView: View {
                     }
                 }
             }
-        }
+        })
     }
     //character health bar
     @State private var playerHealth = 5.0
@@ -156,13 +205,13 @@ struct ContentView: View {
     private let missileSpeed = 400.0
     private let missileDamage = 1.0;
     func shoot(){
-        Timer.scheduledTimer(withTimeInterval: attackSpeed, repeats: true) { _ in
+        loopingTimers.append(Timer.scheduledTimer(withTimeInterval: attackSpeed, repeats: true) { _ in
             missiles.append(Missile(position: pos))
-        }
-        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+        })
+        loopingTimers.append(Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
             _ in
             updateMissilePositions()
-        }
+        })
     }
     private let delay = 0.02;
     func updateMissilePositions(){
@@ -186,10 +235,11 @@ struct ContentView: View {
     }
     
     //bosses
-    @State private var bossNum = 2
+    @State private var bossNum = 1
     @State private var bossPos: CGPoint = CGPoint(x:UIScreen.main.bounds.width/2,y:100)
     @State private var bossSize = CGSize(width:150,height:65)
     func resetBoss(){
+        bossMissiles = []
         bossPos = CGPoint(x:UIScreen.main.bounds.width/2,y:100)
         if (bossNum == 1){
             bossSize = CGSize(width:150,height:65)
@@ -203,15 +253,17 @@ struct ContentView: View {
         }
     }
     //boss attacks
-    private let attackCooldown = 2.0
+    @State private var attackCooldown = 2.0
     func runBossAttacks(){
         Timer.scheduledTimer(withTimeInterval: attackCooldown, repeats: false){
             _ in
-            let timeToRun = runBossAttack()
-            Timer.scheduledTimer(withTimeInterval: timeToRun, repeats: false){
-                _ in
-                if (gameStarted){
-                    runBossAttacks()
+            if (gameStarted){
+                let timeToRun = runBossAttack()
+                Timer.scheduledTimer(withTimeInterval: timeToRun, repeats: false){
+                    _ in
+                    if (gameStarted){
+                        runBossAttacks()
+                    }
                 }
             }
         }
@@ -230,7 +282,7 @@ struct ContentView: View {
             }
         }
         if (bossNum == 2){
-            let bossAttackNum = Int.random(in: 3...3)
+            let bossAttackNum = Int.random(in: 1...4)
             if(bossAttackNum == 1){
                 return runBoss2Attack1()
             }
@@ -478,10 +530,10 @@ struct ContentView: View {
         }
     }
     func runMissileLoop(){
-        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+        loopingTimers.append(Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
             _ in
             runMissileMovements()
-        }
+        })
     }
     //game
     var game: some View {

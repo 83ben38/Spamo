@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct SpamoApp: App {
+    @State var content: ContentView = ContentView()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            content
         }
     }
 }
