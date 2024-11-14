@@ -630,9 +630,7 @@ struct ContentView: View {
                 }
             }
             else if (bossMissiles[index].movementMethod.starts(with: "Rotating")){
-                print(bossMissiles[index].movementMethod)
                 let string = bossMissiles[index].movementMethod.suffix(from: bossMissiles[index].movementMethod.index(bossMissiles[index].movementMethod.startIndex, offsetBy: 8))
-                print(string)
                 let rotation = Double(string)!
                 bossMissiles[index].rotation += bossMissiles[index].missileSpeed * delay * 4
                 bossMissiles[index].position.y += cos(rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
