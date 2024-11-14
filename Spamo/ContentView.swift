@@ -9,6 +9,7 @@ import SwiftUI
 struct ContentView: View {
     @State public var loopingTimers : [Timer] = []
     @State private var gameStarted = false
+    @State private var endLoop = false
     var body: some View{
         ZStack{
             if (gameStarted){
@@ -152,6 +153,7 @@ struct ContentView: View {
                             timer.invalidate()
                         }
                         gameStarted = false
+                        endLoop = true
                     }
                     damageCooldown = 1.0
                     return
@@ -166,6 +168,7 @@ struct ContentView: View {
                                     timer.invalidate()
                                 }
                                 gameStarted = false
+                                endLoop = true
                             }
                             damageCooldown = 1.0
                             bossMissiles.remove(at: bossMissiles.firstIndex(of:missile)!)
@@ -239,6 +242,7 @@ struct ContentView: View {
     @State private var bossPos: CGPoint = CGPoint(x:UIScreen.main.bounds.width/2,y:100)
     @State private var bossSize = CGSize(width:150,height:65)
     func resetBoss(){
+        playerHealth = playerMaxHealth
         bossMissiles = []
         bossPos = CGPoint(x:UIScreen.main.bounds.width/2,y:100)
         if (bossNum == 1){
@@ -262,14 +266,15 @@ struct ContentView: View {
     func runBossAttacks(){
         Timer.scheduledTimer(withTimeInterval: attackCooldown, repeats: false){
             _ in
-            if (gameStarted){
+            if (!endLoop){
                 let timeToRun = runBossAttack()
                 Timer.scheduledTimer(withTimeInterval: timeToRun, repeats: false){
                     _ in
-                    if (gameStarted){
-                        runBossAttacks()
-                    }
+                    runBossAttacks()
                 }
+            }
+            else{
+                endLoop = false
             }
         }
     }
@@ -367,10 +372,10 @@ struct ContentView: View {
     }
     func runBoss1Attack3() -> CGFloat{
         for index in 0..<3{
-            Timer.scheduledTimer(withTimeInterval: CGFloat(index), repeats: false){
+            Timer.scheduledTimer(withTimeInterval: CGFloat(index)/2, repeats: false){
                 _ in
                 let atanValue = atan(Double((pos.x-bossPos.x)/(pos.y-bossPos.y)))*180/Double.pi
-                let missile = BossMissile(position: bossPos,size: CGSize(width:75,height:20), missileId: 1, rotation: -atanValue, movementMethod: "Bouncing"+String(3-index), missileSpeed: 300.0)
+                let missile = BossMissile(position: bossPos,size: CGSize(width:75,height:20), missileId: 1, rotation: -atanValue, movementMethod: index == 2 ? "Forward" : "Bouncing"+String(2-index), missileSpeed: 300.0)
                 bossMissiles.append(missile)
             }
         }
