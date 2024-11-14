@@ -251,6 +251,11 @@ struct ContentView: View {
             bossHealth = 50.0
             bossMaxHealth = 50.0
         }
+        if (bossNum==3){
+            bossSize = CGSize(width:125,height:130)
+            bossHealth = 50.0
+            bossMaxHealth = 50.0
+        }
     }
     //boss attacks
     @State private var attackCooldown = 2.0
@@ -294,6 +299,21 @@ struct ContentView: View {
             }
             if (bossAttackNum == 4){
                 return runBoss1Attack2()
+            }
+        }
+        if (bossNum == 3){
+            let bossAttackNum = Int.random(in: 1...4)
+            if (bossAttackNum == 1){
+                return runBoss3Attack1()
+            }
+            if (bossAttackNum == 2){
+                return runBoss3Attack2()
+            }
+            if (bossAttackNum == 3){
+                return runBoss3Attack3()
+            }
+            if (bossAttackNum == 4){
+                return runBoss3Attack4()
             }
         }
         return 0.0
@@ -463,7 +483,84 @@ struct ContentView: View {
         }
         return 6
     }
-    
+    func runBoss3Attack1() -> CGFloat{
+        let timeToRun1 = (UIScreen.main.bounds.height+bossSize.height)/600
+        let timeToRun2 = (UIScreen.main.bounds.height-bossPos.y+bossSize.height/2)/600
+        let timeToRun3 = timeToRun1-timeToRun2
+        var time : CGFloat = 0
+        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+            timer in
+            time += delay
+            bossPos.y+=600*delay
+            if (time >= timeToRun2){
+                timer.invalidate()
+            }
+        }
+        for index in 0...2{
+            Timer.scheduledTimer(withTimeInterval: timeToRun2 + (timeToRun1+0.5)*CGFloat(index) + 0.5, repeats: false){_ in
+                time = 0
+                bossPos.y = -bossSize.height/2
+                bossPos.x = CGFloat.random(in:bossSize.width/2...UIScreen.main.bounds.width-bossSize.width/2)
+                Timer.scheduledTimer(withTimeInterval: delay, repeats: true)
+                {
+                    timer in
+                    time += delay
+                    bossPos.y+=600*delay
+                    if (time >= timeToRun1){
+                        timer.invalidate()
+                    }
+                }
+            }
+        }
+        Timer.scheduledTimer(withTimeInterval: timeToRun2 + (timeToRun1+0.5)*3 + 0.5, repeats: false){_ in
+            time = 0
+            bossPos.y = -bossSize.height/2
+            bossPos.x = CGFloat.random(in:bossSize.width/2...UIScreen.main.bounds.width-bossSize.width/2)
+            Timer.scheduledTimer(withTimeInterval: delay, repeats: true)
+            {
+                timer in
+                time += delay
+                bossPos.y+=600*delay
+                if (time >= timeToRun3){
+                    timer.invalidate()
+                }
+            }
+        }
+        return timeToRun1*4+2
+    }
+    func runBoss3Attack2() -> CGFloat{
+        for index in 0..<3{
+            Timer.scheduledTimer(withTimeInterval: CGFloat(index)*2, repeats: false){
+                _ in
+                let atanValue = atan(Double((pos.x-bossPos.x)/(pos.y-bossPos.y)))*180/Double.pi
+                let missile = BossMissile(position: bossPos,size: CGSize(width:100,height:100), missileId: 2, rotation: -atanValue, movementMethod: "Rotating"+String(-atanValue), missileSpeed: 150.0)
+                bossMissiles.append(missile)
+            }
+        }
+        return 6.0+UIScreen.main.bounds.height/200
+    }
+    func runBoss3Attack3() -> CGFloat{
+        for index in 0..<3{
+            Timer.scheduledTimer(withTimeInterval: CGFloat(index), repeats: false){
+                _ in
+                let atanValue = CGFloat.random(in:-90...90)
+                let missile = BossMissile(position: bossPos,size: CGSize(width:40,height:40), missileId: 1, rotation: atanValue, movementMethod: "Bouncing5", missileSpeed: 300.0)
+                bossMissiles.append(missile)
+            }
+        }
+        return 3.0+UIScreen.main.bounds.height/150
+    }
+    func runBoss3Attack4() -> CGFloat{
+        for index in 0..<30{
+            Timer.scheduledTimer(withTimeInterval: CGFloat(index)/5, repeats: false){
+                _ in
+                let pos = CGPoint(x:CGFloat.random(in:10...UIScreen.main.bounds.width-10),y:-37.5)
+                let missile = BossMissile(position: pos,size: CGSize(width:15,height:75), missileId: 2, rotation: 0, movementMethod: "Forward", missileSpeed: 400.0)
+                bossMissiles.append(missile)
+            }
+        }
+        return 6.0+UIScreen.main.bounds.height/400
+    }
 
     //boss health bar
     @State private var bossHealth = 50.0
@@ -525,6 +622,18 @@ struct ContentView: View {
                     else{
                         bossMissiles[index].movementMethod = "Bouncing" + String(num!-1)
                     }
+                }
+            }
+            else if (bossMissiles[index].movementMethod.starts(with: "Rotating")){
+                print(bossMissiles[index].movementMethod)
+                let string = bossMissiles[index].movementMethod.suffix(from: bossMissiles[index].movementMethod.index(bossMissiles[index].movementMethod.startIndex, offsetBy: 8))
+                print(string)
+                let rotation = Double(string)!
+                bossMissiles[index].rotation += bossMissiles[index].missileSpeed * delay * 4
+                bossMissiles[index].position.y += cos(rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
+                bossMissiles[index].position.x -= sin(rotation * CGFloat.pi / 180) * bossMissiles[index].missileSpeed * delay
+                if(bossMissiles[index].position.x < -bossMissiles[index].size.width || bossMissiles[index].position.x > UIScreen.main.bounds.width+bossMissiles[index].size.width || bossMissiles[index].position.y < -bossMissiles[index].size.height || bossMissiles[index].position.y > UIScreen.main.bounds.height+bossMissiles[index].size.height){
+                    bossMissiles.remove(at: index)
                 }
             }
         }
