@@ -209,6 +209,7 @@ struct ContentView: View {
     }
     struct Attack: Equatable{
         var size: CGSize = CGSize(width: 20, height: 75)
+        var posOffset: CGPoint = CGPoint(x: 0, y: 0)
         var rotation: CGFloat = 0
         var missileSpeed = 400.0
         var missileDamage = 1.0
@@ -219,12 +220,14 @@ struct ContentView: View {
     }
     @State private var missiles:[Missile] = []
     @State private var attacks:[Attack] = [Attack()]
+    @State private var availableAttacks:[Attack] = [Attack(posOffset: CGPoint(x:30,y:0)),Attack(posOffset: CGPoint(x:-30,y:0)),Attack(size: CGSize(width:40,height:40),missileSpeed: 150.0,missileDamage: 0.04,attackSpeed: 1.5,missileID: "2",movementMethod: "Rotating0"),Attack(rotation: 135,missileSpeed: 200.0,missileDamage: 2.0,missileID: "2",movementMethod: "Slashing225")]
     func shoot(){
         loopingTimers.append(Timer.scheduledTimer(withTimeInterval: delay, repeats: true) { _ in
             for index in attacks.indices{
                 attacks[index].cooldown -= delay
                 if (attacks[index].cooldown <= 0){
-                    missiles.append(Missile(position: pos,rotation: attacks[index].rotation,missileSpeed: attacks[index].missileSpeed,missileDamage: attacks[index].missileDamage,missileID: attacks[index].missileID,movementMethod: attacks[index].movementMethod))
+                    let startPos = CGPoint(x:pos.x+attacks[index].posOffset.x,y:pos.y+attacks[index].posOffset.y)
+                    missiles.append(Missile(position: startPos,rotation: attacks[index].rotation,missileSpeed: attacks[index].missileSpeed,missileDamage: attacks[index].missileDamage,missileID: attacks[index].missileID,movementMethod: attacks[index].movementMethod))
                     attacks[index].cooldown = attacks[index].attackSpeed
                 }
             }
