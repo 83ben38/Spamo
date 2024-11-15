@@ -202,14 +202,32 @@ struct ContentView: View {
         var position: CGPoint
         var size: CGSize = CGSize(width: 20, height: 75)
         var rotation: CGFloat = 0
+        var missileSpeed = 400.0
+        var missileDamage = 1.0
+        var missileID: String
+        var movementMethod: String
+    }
+    struct Attack: Equatable{
+        var size: CGSize = CGSize(width: 20, height: 75)
+        var rotation: CGFloat = 0
+        var missileSpeed = 400.0
+        var missileDamage = 1.0
+        var attackSpeed = 1.0
+        var cooldown = 1.0
+        var missileID: String = "1"
+        var movementMethod: String = "Forward"
     }
     @State private var missiles:[Missile] = []
-    private let attackSpeed = 1.0
-    private let missileSpeed = 400.0
-    private let missileDamage = 1.0;
+    @State private var attacks:[Attack] = [Attack()]
     func shoot(){
-        loopingTimers.append(Timer.scheduledTimer(withTimeInterval: attackSpeed, repeats: true) { _ in
-            missiles.append(Missile(position: pos))
+        loopingTimers.append(Timer.scheduledTimer(withTimeInterval: delay, repeats: true) { _ in
+            for index in attacks.indices{
+                attacks[index].cooldown -= delay
+                if (attacks[index].cooldown <= 0){
+                    missiles.append(Missile(position: pos,rotation: attacks[index].rotation,missileSpeed: attacks[index].missileSpeed,missileDamage: attacks[index].missileDamage,missileID: attacks[index].missileID,movementMethod: attacks[index].movementMethod))
+                    attacks[index].cooldown = attacks[index].attackSpeed
+                }
+            }
         })
         loopingTimers.append(Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
             _ in
@@ -221,18 +239,69 @@ struct ContentView: View {
         let bossRect = CGRect(origin: bossPos, size: bossSize).offsetBy(dx: -bossSize.width/2, dy: -bossSize.height/2)
         for index in missiles.indices.reversed() {
             let missileRect = CGRect(origin: missiles[index].position, size: missiles[index].size).offsetBy(dx: -missiles[index].size.width/2, dy: -missiles[index].size.height/2)
+            var removed = false
             if (missileRect.intersects(bossRect)){
-                missiles.remove(at: index)
-                bossHealth-=missileDamage
+                bossHealth-=missiles[index].missileDamage
+                if (!missiles[index].movementMethod.starts(with: "Rotating")){
+                    missiles.remove(at: index)
+                    removed = true
+                }
                 if (bossHealth <= 0){
                     bossNum+=1;
                     resetBoss()
                 }
             }
-            else if missiles[index].position.y > -100 {
-                missiles[index].position.y -= missileSpeed * delay
-            } else {
-                missiles.remove(at: index)
+            if (!removed) {
+                if (missiles[index].movementMethod == "Forward"){
+                    missiles[index].position.y -= cos(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
+                    missiles[index].position.x -= sin(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
+                    if(missiles[index].position.x < -missiles[index].size.width || missiles[index].position.x > UIScreen.main.bounds.width+missiles[index].size.width || missiles[index].position.y < -missiles[index].size.height || missiles[index].position.y > UIScreen.main.bounds.height+missiles[index].size.height){
+                        missiles.remove(at: index)
+                    }
+                }
+                else if (missiles[index].movementMethod.starts(with: "Bouncing")){
+                    missiles[index].position.y -= cos(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
+                    missiles[index].position.x -= sin(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
+                    var bounce = false
+                    if(missiles[index].position.x < missiles[index].size.width/2 || missiles[index].position.x > UIScreen.main.bounds.width-missiles[index].size.width/2){
+                        bounce = true
+                        missiles[index].rotation = -missiles[index].rotation
+                    }
+                    if(missiles[index].position.y < missiles[index].size.height/2 || missiles[index].position.y > UIScreen.main.bounds.height-missiles[index].size.height/2){
+                        bounce = true
+                        missiles[index].rotation = 180-missiles[index].rotation
+                    }
+                    if (bounce){
+                        let num = Int(missiles[index].movementMethod.suffix(from: missiles[index].movementMethod.index(missiles[index].movementMethod.startIndex, offsetBy: 8)))
+                        if (num == 1){
+                            missiles[index].movementMethod = "Forward"
+                        }
+                        else{
+                            missiles[index].movementMethod = "Bouncing" + String(num!-1)
+                        }
+                    }
+                }
+                else if (missiles[index].movementMethod.starts(with: "Rotating")){
+                    let string = missiles[index].movementMethod.suffix(from: missiles[index].movementMethod.index(missiles[index].movementMethod.startIndex, offsetBy: 8))
+                    let rotation = Double(string)!
+                    missiles[index].rotation += missiles[index].missileSpeed * delay * 4
+                    missiles[index].position.y -= cos(rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
+                    missiles[index].position.x -= sin(rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
+                    if(missiles[index].position.x < -missiles[index].size.width || missiles[index].position.x > UIScreen.main.bounds.width+missiles[index].size.width || missiles[index].position.y < -missiles[index].size.height || missiles[index].position.y > UIScreen.main.bounds.height+missiles[index].size.height){
+                        missiles.remove(at: index)
+                    }
+                }
+                else if (missiles[index].movementMethod.starts(with: "Slashing")){
+                    let string = missiles[index].movementMethod.suffix(from: missiles[index].movementMethod.index(missiles[index].movementMethod.startIndex, offsetBy: 8))
+                    let endRotation = Double(string)!
+                    missiles[index].rotation += missiles[index].missileSpeed * delay
+                    let rotation = missiles[index].rotation
+                    missiles[index].position.y = pos.y + cos(rotation * CGFloat.pi / 180)*50
+                    missiles[index].position.x =  pos.x - sin(rotation * CGFloat.pi / 180)*50
+                    if (missiles[index].rotation >= endRotation){
+                        missiles.remove(at: index)
+                    }
+                }
             }
         }
     }
@@ -656,7 +725,7 @@ struct ContentView: View {
             Image("Character").resizable().frame(width:playerSize.width,height:playerSize.height).position(pos).onAppear{shoot();checkForCollisions();resetBoss()}
             ForEach(missiles){
                 missile in
-                Image("missile").resizable().rotationEffect(.degrees(missile.rotation)).frame(width:missile.size.width,height:missile.size.height).position(missile.position).onAppear{}
+                Image("Missile"+missile.missileID).resizable().rotationEffect(.degrees(missile.rotation)).frame(width:missile.size.width,height:missile.size.height).position(missile.position).onAppear{}
             }
             ForEach(bossMissiles){
                 missile in
