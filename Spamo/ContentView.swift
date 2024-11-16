@@ -10,9 +10,14 @@ struct ContentView: View {
     @State public var loopingTimers : [Timer] = []
     @State private var gameStarted = false
     @State private var endLoop = false
+    @State private var upgradeScreenOpen = false
     var body: some View{
         ZStack{
-            if (gameStarted){
+            
+            if (upgradeScreenOpen){
+                upgradeScreen
+            }
+            else if (gameStarted){
                 game
             }
             else{
@@ -69,7 +74,11 @@ struct ContentView: View {
                 attackCooldown = 4.0-Double(difficultyNum)
                 playerHealth = 9.0-Double(difficultyNum*2)
                 playerMaxHealth = 9.0-Double(difficultyNum*2)
+                bossNum = 1
                 gameStarted = true
+                upgradeScreenOpen = true
+                resetEverything()
+                resetUpgrades()
             }) {
             Text("Start")
                 .font(.title)
@@ -131,7 +140,6 @@ struct ContentView: View {
     @State private var playerSize = CGSize(width:56,height:90)
     @State private var damageCooldown = 0.0;
     func checkForCollisions(){
-        bossNum = 1
         pos = CGPoint(x:200,y:400)
         mousePos = CGPoint(x:200,y:400)
         playerSize = CGSize(width:56,height:90)
@@ -152,6 +160,7 @@ struct ContentView: View {
                         for timer in loopingTimers{
                             timer.invalidate()
                         }
+                        loopingTimers = []
                         gameStarted = false
                         endLoop = true
                     }
@@ -167,6 +176,7 @@ struct ContentView: View {
                                 for timer in loopingTimers{
                                     timer.invalidate()
                                 }
+                                loopingTimers = []
                                 gameStarted = false
                                 endLoop = true
                             }
@@ -220,7 +230,13 @@ struct ContentView: View {
     }
     @State private var missiles:[Missile] = []
     @State private var attacks:[Attack] = [Attack()]
-    @State private var availableAttacks:[Attack] = [Attack(posOffset: CGPoint(x:30,y:0)),Attack(posOffset: CGPoint(x:-30,y:0)),Attack(size: CGSize(width:40,height:40),missileSpeed: 150.0,missileDamage: 0.04,attackSpeed: 1.5,missileID: "2",movementMethod: "Rotating0"),Attack(rotation: 135,missileSpeed: 200.0,missileDamage: 2.0,missileID: "2",movementMethod: "Slashing225")]
+    @State private var availableAttacks:[Attack] = []
+    @State private var initialAttacks:[Attack] = [
+        Attack(posOffset: CGPoint(x:30,y:0),attackSpeed: 4.0),Attack(posOffset: CGPoint(x:-30,y:0),attackSpeed: 4.0),
+        Attack(size: CGSize(width:40,height:40),missileSpeed: 150.0,missileDamage: 0.04,attackSpeed: 1.5,missileID: "2",movementMethod: "Rotating0"),
+        Attack(rotation: 135,missileSpeed: 200.0,missileDamage: 2.0,missileID: "2",movementMethod: "Slashing225"),
+        Attack(attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:45,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:90,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:135,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:180,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:-45,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:-90,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:-135,attackSpeed: 8,movementMethod: "Bouncing3"),
+    ]
     func shoot(){
         loopingTimers.append(Timer.scheduledTimer(withTimeInterval: delay, repeats: true) { _ in
             for index in attacks.indices{
@@ -249,22 +265,28 @@ struct ContentView: View {
                     missiles.remove(at: index)
                     removed = true
                 }
-                if (bossHealth <= 0){
+                if (bossHealth <= 0 && !upgradeScreenOpen){
                     bossNum+=1;
-                    resetBoss()
+                    endLoop = true
+                    upgradeScreenOpen = true
+                    resetUpgrades()
+                    for timer in loopingTimers{
+                        timer.invalidate()
+                    }
+                    loopingTimers = []
                 }
             }
             if (!removed) {
                 if (missiles[index].movementMethod == "Forward"){
                     missiles[index].position.y -= cos(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
-                    missiles[index].position.x -= sin(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
+                    missiles[index].position.x += sin(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
                     if(missiles[index].position.x < -missiles[index].size.width || missiles[index].position.x > UIScreen.main.bounds.width+missiles[index].size.width || missiles[index].position.y < -missiles[index].size.height || missiles[index].position.y > UIScreen.main.bounds.height+missiles[index].size.height){
                         missiles.remove(at: index)
                     }
                 }
                 else if (missiles[index].movementMethod.starts(with: "Bouncing")){
                     missiles[index].position.y -= cos(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
-                    missiles[index].position.x -= sin(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
+                    missiles[index].position.x += sin(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
                     var bounce = false
                     if(missiles[index].position.x < missiles[index].size.width/2 || missiles[index].position.x > UIScreen.main.bounds.width-missiles[index].size.width/2){
                         bounce = true
@@ -289,7 +311,7 @@ struct ContentView: View {
                     let rotation = Double(string)!
                     missiles[index].rotation += missiles[index].missileSpeed * delay * 4
                     missiles[index].position.y -= cos(rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
-                    missiles[index].position.x -= sin(rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
+                    missiles[index].position.x += sin(rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
                     if(missiles[index].position.x < -missiles[index].size.width || missiles[index].position.x > UIScreen.main.bounds.width+missiles[index].size.width || missiles[index].position.y < -missiles[index].size.height || missiles[index].position.y > UIScreen.main.bounds.height+missiles[index].size.height){
                         missiles.remove(at: index)
                     }
@@ -742,6 +764,87 @@ struct ContentView: View {
             mousePos = value.location
         }
         )
+    }
+    
+    
+    
+    //upgrades
+    @State var upgrades: [Int] = [0,0,0]
+    @State var availableUpgrades: [Int] = [0,1,2,3]
+    func resetEverything(){
+        availableUpgrades = [0,1,2,3]
+        availableAttacks = initialAttacks
+        attacks = [Attack()]
+    }
+    func resetUpgrades(){
+        upgrades = []
+        for _ in 0..<3{
+            upgrades.append(availableUpgrades[Int.random(in: availableUpgrades.indices)])
+        }
+    }
+    var upgradeScreen: some View{
+        ZStack{
+            Color.white.ignoresSafeArea()
+            ForEach(upgrades.indices){
+                upgrade in
+                configureUpgradeView(num: upgrades[upgrade],upgrade:CGFloat(upgrade))
+            }
+        }
+    }
+    func configureUpgradeView(num: Int, upgrade: CGFloat) -> some View{
+        var text: String = ""
+        var color: Color = Color.black
+        if (num == 0){
+            text = "Add +2 missiles every 4 attacks."
+            color = Color.blue
+        }
+        if (num == 1){
+            text = "Gain a spinning sword attack."
+            color = Color.blue
+        }
+        if (num == 2){
+            text = "Gain a melee sword attack."
+            color = Color.blue
+        }
+        if (num == 3){
+            text = "Occasionaly shoot out a burst in every direction."
+            color = Color.blue
+        }
+        return Button(action: {
+            configureUpgrade(num: num)
+        }){
+            Text(text)
+                .font(.title)
+                .padding()
+                .background(color)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+        }.position(x:UIScreen.main.bounds.width/2,y:(upgrade*2+1)*UIScreen.main.bounds.height/7)
+    }
+    func configureUpgrade(num: Int){
+        if (num == 0){
+            attacks.append(availableAttacks[0])
+            attacks.append(availableAttacks[1])
+            availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 0)!)
+        }
+        if (num == 1){
+            attacks.append(availableAttacks[2])
+            availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 1)!)
+        }
+        if (num == 2){
+            attacks.append(availableAttacks[3])
+            availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 2)!)
+        }
+        if (num == 3){
+            for index in 4..<12{
+                attacks.append(availableAttacks[index])
+            }
+            availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 3)!)
+        }
+        for index in attacks.indices{
+            attacks[index].cooldown = attacks[index].attackSpeed
+        }
+        upgradeScreenOpen = false
     }
 }
 
