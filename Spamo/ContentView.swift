@@ -225,6 +225,7 @@ struct ContentView: View {
         var missileDamage = 1.0
         var attackSpeed = 1.0
         var cooldown = 1.0
+        var startingCooldown = 1.0
         var missileID: String = "1"
         var movementMethod: String = "Forward"
     }
@@ -338,21 +339,22 @@ struct ContentView: View {
     func resetBoss(){
         playerHealth = playerMaxHealth
         bossMissiles = []
+        missiles = []
         bossPos = CGPoint(x:UIScreen.main.bounds.width/2,y:100)
         if (bossNum == 1){
             bossSize = CGSize(width:150,height:65)
-            bossHealth = 50.0
-            bossMaxHealth = 50.0
+            bossHealth = 75.0
+            bossMaxHealth = 75.0
         }
         if (bossNum == 2){
             bossSize = CGSize(width:185,height:125)
-            bossHealth = 50.0
-            bossMaxHealth = 50.0
+            bossHealth = 125.0
+            bossMaxHealth = 125.0
         }
         if (bossNum==3){
             bossSize = CGSize(width:125,height:130)
-            bossHealth = 50.0
-            bossMaxHealth = 50.0
+            bossHealth = 200.0
+            bossMaxHealth = 200.0
         }
     }
     //boss attacks
@@ -469,7 +471,7 @@ struct ContentView: View {
             Timer.scheduledTimer(withTimeInterval: CGFloat(index)/2, repeats: false){
                 _ in
                 let atanValue = atan(Double((pos.x-bossPos.x)/(pos.y-bossPos.y)))*180/Double.pi
-                let missile = BossMissile(position: bossPos,size: CGSize(width:75,height:20), missileId: 1, rotation: -atanValue, movementMethod: index == 2 ? "Forward" : "Bouncing"+String(2-index), missileSpeed: 300.0)
+                let missile = BossMissile(position: bossPos,size: CGSize(width:20,height:75), missileId: 1, rotation: -atanValue, movementMethod: index == 2 ? "Forward" : "Bouncing"+String(2-index), missileSpeed: 300.0)
                 bossMissiles.append(missile)
             }
         }
@@ -534,7 +536,7 @@ struct ContentView: View {
                     bounces = true;
                 }
                 let atanValue = atan(Double((pos2.x-bossPos.x)/(pos2.y-bossPos.y)))*180/Double.pi
-                let missile = BossMissile(position: bossPos,size: CGSize(width:75,height:20), missileId: 1, rotation: -atanValue, movementMethod: bounces ? "Bouncing1" : "Forward", missileSpeed: 300.0)
+                let missile = BossMissile(position: bossPos,size: CGSize(width:20,height:75), missileId: 1, rotation: -atanValue, movementMethod: bounces ? "Bouncing1" : "Forward", missileSpeed: 300.0)
                 bossMissiles.append(missile)
             }
         }
@@ -542,20 +544,20 @@ struct ContentView: View {
     }
     func runBoss2Attack3() -> CGFloat{
         for index in 0...3{
-            Timer.scheduledTimer(withTimeInterval: 1.5*Double(index), repeats: false){
+            Timer.scheduledTimer(withTimeInterval: 1.75*Double(index), repeats: false){
                 _ in
                 let missile1 = BossMissile(position: CGPoint(x:10,y:pos.y),size: CGSize(width:75,height:20), missileId: 1, rotation: -90, movementMethod: "Ghost", missileSpeed: 400.0, transparency: 0.5)
-                let missile2 = BossMissile(position: CGPoint(x:pos.x,y:UIScreen.main.bounds.height-20),size: CGSize(width:75,height:20), missileId: 1, rotation: 180, movementMethod: "Ghost", missileSpeed: 400.0, transparency: 0.5)
+                let missile2 = BossMissile(position: CGPoint(x:pos.x,y:UIScreen.main.bounds.height-20),size: CGSize(width:20,height:75), missileId: 1, rotation: 180, movementMethod: "Ghost", missileSpeed: 400.0, transparency: 0.5)
                 let pos2 = CGPoint(x:CGFloat.random(in: 10...UIScreen.main.bounds.width-10),y:CGFloat.random(in: 50...UIScreen.main.bounds.height-20))
                 var atanValue = atan(Double((pos.x-pos2.x)/(pos.y-pos2.y)))*180/Double.pi
                 if (pos2.y > pos.y){
                     atanValue+=180
                 }
-                let missile3 = BossMissile(position: pos2,size: CGSize(width:75,height:20), missileId: 1, rotation: -atanValue, movementMethod: "Ghost", missileSpeed: 400.0, transparency: 0.5)
+                let missile3 = BossMissile(position: pos2,size: CGSize(width:20,height:75), missileId: 1, rotation: -atanValue, movementMethod: "Ghost", missileSpeed: 400.0, transparency: 0.5)
                 bossMissiles.append(missile1)
                 bossMissiles.append(missile2)
                 bossMissiles.append(missile3)
-                Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false){_ in
+                Timer.scheduledTimer(withTimeInterval: 0.75, repeats: false){_ in
                     for index in bossMissiles.indices{
                         if (bossMissiles[index] == missile1){
                             bossMissiles[index].movementMethod = "Forward"
@@ -580,7 +582,7 @@ struct ContentView: View {
                 }
             }
         }
-        return 6
+        return 7
     }
     func runBoss3Attack1() -> CGFloat{
         let timeToRun1 = (UIScreen.main.bounds.height+bossSize.height)/600
@@ -747,16 +749,16 @@ struct ContentView: View {
             background
             bossHealthBar.position(x:UIScreen.main.bounds.width/2,y:25)
             playerHealthBar.position(x:UIScreen.main.bounds.width/2,y:UIScreen.main.bounds.height-100)
-            Image("Character").resizable().frame(width:playerSize.width,height:playerSize.height).position(pos).onAppear{shoot();checkForCollisions();resetBoss()}
+            Image("Character").resizable(resizingMode: .stretch).frame(width:playerSize.width,height:playerSize.height).position(pos).onAppear{shoot();checkForCollisions();resetBoss()}
             ForEach(missiles){
                 missile in
-                Image("Missile"+missile.missileID).resizable().rotationEffect(.degrees(missile.rotation)).frame(width:missile.size.width,height:missile.size.height).position(missile.position).onAppear{}
+                Image("Missile"+missile.missileID).resizable(resizingMode: .stretch).rotationEffect(.degrees(missile.rotation)).frame(width:missile.size.width,height:missile.size.height).position(missile.position).onAppear{}
             }
             ForEach(bossMissiles){
                 missile in
-                Image("BossMissile"+String(missile.missileId)).rotationEffect(.degrees(missile.rotation)).frame(width:missile.size.width,height:missile.size.height).position(missile.position).opacity(missile.transparency).onAppear{}
+                Image("BossMissile"+String(missile.missileId)).frame(width:missile.size.width,height:missile.size.height).rotationEffect(.degrees(missile.rotation)).position(missile.position).opacity(missile.transparency).onAppear{}
             }
-            Image("Boss"+String(bossNum)).resizable().frame(width:bossSize.width,height:bossSize.height).position(bossPos).onAppear{runBossAttacks();runMissileLoop()}
+            Image("Boss"+String(bossNum)).resizable(resizingMode: .stretch).frame(width:bossSize.width,height:bossSize.height).position(bossPos).onAppear{runBossAttacks();runMissileLoop()}
         }
         .gesture(DragGesture(minimumDistance: 0)
             .onChanged{
@@ -770,9 +772,9 @@ struct ContentView: View {
     
     //upgrades
     @State var upgrades: [Int] = [0,0,0]
-    @State var availableUpgrades: [Int] = [0,1,2,3]
+    @State var availableUpgrades: [Int] = [0,1,2,3,4,5]
     func resetEverything(){
-        availableUpgrades = [0,1,2,3]
+        availableUpgrades = [0,1,2,3,4,5]
         availableAttacks = initialAttacks
         attacks = [Attack()]
     }
@@ -807,8 +809,21 @@ struct ContentView: View {
             color = Color.blue
         }
         if (num == 3){
-            text = "Occasionaly shoot out a burst in every direction."
+            if (availableAttacks[4].rotation == 0){
+                text = "Occasionaly shoot out a burst of 8 missiles."
+            }
+            else{
+                text = "Occasionaly shoot out a burst with an additional 8 missiles."
+            }
             color = Color.blue
+        }
+        if (num == 4){
+            text = "Attacks fire 50% more often."
+            color = Color.orange
+        }
+        if (num == 5){
+            text = "Attacks deal 50% more damage."
+            color = Color.orange
         }
         return Button(action: {
             configureUpgrade(num: num)
@@ -825,7 +840,13 @@ struct ContentView: View {
         if (num == 0){
             attacks.append(availableAttacks[0])
             attacks.append(availableAttacks[1])
-            availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 0)!)
+            if (availableAttacks[0].startingCooldown == availableAttacks[0].attackSpeed){
+                availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 0)!)
+            }
+            else{
+                availableAttacks[0].startingCooldown+=availableAttacks[0].attackSpeed/4;
+                availableAttacks[1].startingCooldown+=availableAttacks[1].attackSpeed/4;
+            }
         }
         if (num == 1){
             attacks.append(availableAttacks[2])
@@ -839,10 +860,35 @@ struct ContentView: View {
             for index in 4..<12{
                 attacks.append(availableAttacks[index])
             }
-            availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 3)!)
+            if (availableAttacks[4].rotation == 0){
+                for index in 4..<12{
+                    availableAttacks[index].rotation+=22.5
+                }
+            }
+            else{
+                availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 3)!)
+            }
+        }
+        if (num == 4){
+            for index in availableAttacks.indices{
+                availableAttacks[index].attackSpeed /= 1.5
+                availableAttacks[index].startingCooldown /= 1.5
+            }
+            for index in attacks.indices{
+                attacks[index].attackSpeed /= 1.5
+                availableAttacks[index].startingCooldown /= 1.5
+            }
+        }
+        if (num == 5){
+            for index in availableAttacks.indices{
+                availableAttacks[index].missileDamage *= 1.5
+            }
+            for index in attacks.indices{
+                attacks[index].missileDamage *= 1.5
+            }
         }
         for index in attacks.indices{
-            attacks[index].cooldown = attacks[index].attackSpeed
+            attacks[index].cooldown = attacks[index].startingCooldown
         }
         upgradeScreenOpen = false
     }
