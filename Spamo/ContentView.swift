@@ -334,6 +334,7 @@ struct ContentView: View {
     
     //bosses
     @State private var bossNum = 1
+    @State private var bossNum2 = 1
     @State private var bossPos: CGPoint = CGPoint(x:UIScreen.main.bounds.width/2,y:100)
     @State private var bossSize = CGSize(width:150,height:65)
     func resetBoss(){
@@ -355,6 +356,12 @@ struct ContentView: View {
             bossSize = CGSize(width:125,height:130)
             bossHealth = 200.0
             bossMaxHealth = 200.0
+        }
+        if (bossNum == 4){
+            bossPos = CGPoint(x:50,y:UIScreen.main.bounds.height/2)
+            bossSize = CGSize(width:115,height: 65)
+            bossHealth = 300.0
+            bossMaxHealth = 300.0
         }
     }
     //boss attacks
@@ -415,6 +422,21 @@ struct ContentView: View {
             }
             if (bossAttackNum == 4){
                 return runBoss3Attack4()
+            }
+        }
+        if (bossNum == 4){
+            let bossAttackNum = Int.random(in: 1...1)
+            if (bossAttackNum == 1){
+                //switch sides
+            }
+            if (bossAttackNum == 2){
+                //top to bottom bouncing
+            }
+            if (bossAttackNum == 3){
+                //dash at you randomly
+            }
+            if (bossAttackNum == 4){
+                //shotgun attack
             }
         }
         return 0.0
@@ -758,7 +780,12 @@ struct ContentView: View {
                 missile in
                 Image("BossMissile"+String(missile.missileId)).frame(width:missile.size.width,height:missile.size.height).rotationEffect(.degrees(missile.rotation)).position(missile.position).opacity(missile.transparency).onAppear{}
             }
-            Image("Boss"+String(bossNum)).resizable(resizingMode: .stretch).frame(width:bossSize.width,height:bossSize.height).position(bossPos).onAppear{runBossAttacks();runMissileLoop()}
+            if (bossNum == 4){
+                Image("Boss4 " + String(bossNum2)).resizable(resizingMode: .stretch).frame(width:bossSize.width,height:bossSize.height).position(bossPos).onAppear{runBossAttacks();runMissileLoop()}
+            }
+            else{
+                Image("Boss"+String(bossNum)).resizable(resizingMode: .stretch).frame(width:bossSize.width,height:bossSize.height).position(bossPos).onAppear{runBossAttacks();runMissileLoop()}
+            }
         }
         .gesture(DragGesture(minimumDistance: 0)
             .onChanged{
