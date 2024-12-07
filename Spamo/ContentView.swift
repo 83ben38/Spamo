@@ -75,6 +75,7 @@ struct ContentView: View {
                 playerHealth = 9.0-Double(difficultyNum*2)
                 playerMaxHealth = 9.0-Double(difficultyNum*2)
                 bossNum = 1
+                bossNum2 = 1
                 gameStarted = true
                 upgradeScreenOpen = true
                 resetEverything()
@@ -425,18 +426,18 @@ struct ContentView: View {
             }
         }
         if (bossNum == 4){
-            let bossAttackNum = Int.random(in: 1...1)
+            let bossAttackNum = Int.random(in: 1...4)
             if (bossAttackNum == 1){
-                //switch sides
+                return runBoss4Attack1()
             }
             if (bossAttackNum == 2){
-                //top to bottom bouncing
+                return runBoss4Attack2()
             }
             if (bossAttackNum == 3){
-                //dash at you randomly
+                return runBoss4Attack3()
             }
             if (bossAttackNum == 4){
-                //shotgun attack
+                return runBoss4Attack4()
             }
         }
         return 0.0
@@ -684,7 +685,190 @@ struct ContentView: View {
         }
         return 6.0+UIScreen.main.bounds.height/400
     }
-
+    func runBoss4Attack1() -> CGFloat{
+        var goalPos : CGFloat = pos.y
+        let timeToRun : CGFloat = abs(bossPos.y-goalPos)/300
+        var time : CGFloat = 0
+        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+            timer in
+            time += delay
+            if (goalPos > bossPos.y){
+                bossPos.y+=300*delay
+            }
+            else{
+                bossPos.y-=300*delay
+            }
+            if (time >= timeToRun){
+                timer.invalidate()
+                bossPos.y = goalPos
+            }
+        }
+        Timer.scheduledTimer(withTimeInterval: 1+timeToRun, repeats: false){
+            _ in
+            time = 0
+            if (bossNum2 == 1){
+                goalPos = UIScreen.main.bounds.width-50
+            }
+            else{
+                goalPos = 50
+            }
+            Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+                timer in
+                time += delay
+                if (goalPos > bossPos.x){
+                    bossPos.x+=300*delay
+                }
+                else{
+                    bossPos.x-=300*delay
+                }
+                if (time >= (UIScreen.main.bounds.width-100)/300){
+                    if (bossNum2 == 1){
+                        bossNum2 = 2
+                    }
+                    else{
+                        bossNum2 = 1
+                    }
+                    timer.invalidate()
+                    bossPos.x = goalPos
+                }
+            }
+        }
+        return timeToRun+1+(UIScreen.main.bounds.width-100)/300
+    }
+    func runBoss4Attack2() -> CGFloat{
+        var goalPos : CGFloat = UIScreen.main.bounds.height/8
+        let timeToRun : CGFloat = abs(bossPos.y-goalPos)/200
+        var time : CGFloat = 0
+        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+            timer in
+            time += delay
+            if (goalPos > bossPos.y){
+                bossPos.y+=200*delay
+            }
+            else{
+                bossPos.y-=200*delay
+            }
+            if (time >= timeToRun){
+                timer.invalidate()
+                bossPos.y = goalPos
+            }
+        }
+        let timeToRun2 = (UIScreen.main.bounds.height*3/4)/200
+        Timer.scheduledTimer(withTimeInterval: timeToRun+0.25, repeats: false){
+            _ in
+            goalPos = UIScreen.main.bounds.height*7/8
+            time = 0
+            Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+                timer in
+                time += delay
+                if (goalPos > bossPos.y){
+                    bossPos.y+=200*delay
+                }
+                else{
+                    bossPos.y-=200*delay
+                }
+                if (time >= timeToRun2){
+                    timer.invalidate()
+                    bossPos.y = goalPos
+                }
+            }
+        }
+        for value in  0...5{
+            let value2 = value
+            Timer.scheduledTimer(withTimeInterval: timeToRun + (CGFloat(value2) * UIScreen.main.bounds.height/1200), repeats: false){
+                _ in
+            
+                var rotation : CGFloat = -90
+                if (bossNum2 == 2){
+                    rotation = 90
+                }
+                let missile = BossMissile(position: bossPos,size: CGSize(width:75,height:20), missileId: 1, rotation: rotation, movementMethod: "Bouncing1", missileSpeed: 400.0)
+                bossMissiles.append(missile)
+            }
+        }
+    
+        return timeToRun + timeToRun2;
+    }
+    func runBoss4Attack3() -> CGFloat{
+        let timeToRun1 = (UIScreen.main.bounds.width+bossSize.width)/400
+        let timeToRun2 = (UIScreen.main.bounds.width-50+bossSize.width/2)/400
+        let timeToRun3 = timeToRun1-timeToRun2
+        var time : CGFloat = 0
+        var direction: CGFloat = 400
+        if (bossNum2 == 2){
+            direction = -400
+        }
+        Timer.scheduledTimer(withTimeInterval: delay, repeats: true){
+            timer in
+            time += delay
+            bossPos.x+=direction*delay
+            if (time >= timeToRun2){
+                timer.invalidate()
+            }
+        }
+        for index in 0...2{
+            Timer.scheduledTimer(withTimeInterval: timeToRun2 + (timeToRun1+0.5)*CGFloat(index) + 0.5, repeats: false){_ in
+                time = 0
+                direction = 400
+                bossNum2 = 1
+                bossPos.x = -bossSize.width/2
+                if (Int.random(in: 1...2) == 1){
+                    direction = -400
+                    bossNum2 = 2
+                    bossPos.x = UIScreen.main.bounds.width+bossSize.width/2
+                }
+                bossPos.y = CGFloat.random(in:bossSize.height/2...UIScreen.main.bounds.height-bossSize.height/2)
+                Timer.scheduledTimer(withTimeInterval: delay, repeats: true)
+                {
+                    timer in
+                    time += delay
+                    bossPos.x+=direction*delay
+                    if (time >= timeToRun1){
+                        timer.invalidate()
+                    }
+                }
+            }
+        }
+        Timer.scheduledTimer(withTimeInterval: timeToRun2 + (timeToRun1+0.5)*3 + 0.5, repeats: false){_ in
+            time = 0
+            direction = 400
+            bossNum2 = 1
+            bossPos.x = -bossSize.width/2
+            if (Int.random(in: 1...2) == 1){
+                direction = -400
+                bossNum2 = 2
+                bossPos.x = UIScreen.main.bounds.width+bossSize.width/2
+            }
+            bossPos.y = CGFloat.random(in:bossSize.height/2...UIScreen.main.bounds.height-bossSize.height/2)
+            Timer.scheduledTimer(withTimeInterval: delay, repeats: true)
+            {
+                timer in
+                time += delay
+                bossPos.x+=direction*delay
+                if (time >= timeToRun3){
+                    timer.invalidate()
+                }
+            }
+        }
+        return timeToRun1*4+2
+    }
+    func runBoss4Attack4() -> CGFloat{
+        for rot in 1...8{
+        
+            let missile = BossMissile(position: CGPoint(x:bossPos.x-bossSize.width*(CGFloat(bossNum2)-1.5),y:bossPos.y+bossSize.height/3),size: CGSize(width:40,height:40), missileId: 1, rotation: CGFloat(rot*45), movementMethod: "Ghost", missileSpeed: 200.0, transparency: 0.5)
+            bossMissiles.append(missile)
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: false){_ in
+                for index in bossMissiles.indices{
+                    if (bossMissiles[index] == missile){
+                        bossMissiles[index].movementMethod = "Bouncing1"
+                        bossMissiles[index].transparency = 1
+                        break
+                    }
+                }
+            }
+        }
+        return UIScreen.main.bounds.height/400 + 1;
+    }
     //boss health bar
     @State private var bossHealth = 50.0
     @State private var bossMaxHealth = 50.0
