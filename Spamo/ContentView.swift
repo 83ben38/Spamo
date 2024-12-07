@@ -11,10 +11,14 @@ struct ContentView: View {
     @State private var gameStarted = false
     @State private var endLoop = false
     @State private var upgradeScreenOpen = false
+    @State private var endScreenOpen = false
     var body: some View{
         ZStack{
-            
-            if (upgradeScreenOpen){
+            if (endScreenOpen){
+                background
+                endScreen
+            }
+            else if (upgradeScreenOpen){
                 upgradeScreen
             }
             else if (gameStarted){
@@ -269,9 +273,15 @@ struct ContentView: View {
                 }
                 if (bossHealth <= 0 && !upgradeScreenOpen){
                     bossNum+=1;
+                    if(bossNum == 5){
+                        endScreenOpen = true
+                        gameStarted = false
+                    }
+                    else{
+                        resetUpgrades()
+                        upgradeScreenOpen = true
+                    }
                     endLoop = true
-                    upgradeScreenOpen = true
-                    resetUpgrades()
                     for timer in loopingTimers{
                         timer.invalidate()
                     }
@@ -955,7 +965,7 @@ struct ContentView: View {
             background
             bossHealthBar.position(x:UIScreen.main.bounds.width/2,y:25)
             playerHealthBar.position(x:UIScreen.main.bounds.width/2,y:UIScreen.main.bounds.height-100)
-            Image("Character").resizable(resizingMode: .stretch).frame(width:playerSize.width,height:playerSize.height).position(pos).onAppear{shoot();checkForCollisions();resetBoss()}
+            Image("Character").resizable(resizingMode: .stretch).frame(width:playerSize.width,height:playerSize.height).position(pos).onAppear{shoot();checkForCollisions();resetBoss();timeStarted = Date()}
             ForEach(missiles){
                 missile in
                 Image("Missile"+missile.missileID).resizable(resizingMode: .stretch).rotationEffect(.degrees(missile.rotation)).frame(width:missile.size.width,height:missile.size.height).position(missile.position).onAppear{}
@@ -1102,6 +1112,44 @@ struct ContentView: View {
             attacks[index].cooldown = attacks[index].startingCooldown
         }
         upgradeScreenOpen = false
+    }
+    
+    @State var time : TimeInterval = TimeInterval()
+    @State var timeStarted : Date = Date()
+    var endScreen: some View{
+        VStack {
+            Text("You Win!")
+                .font(.largeTitle)
+                .foregroundColor(.white)
+                .padding()
+            Text("Difficulty:")
+                .font(.largeTitle)
+                .foregroundColor(.white)
+                .padding()
+            Text(difficultyText)
+                .font(.largeTitle)
+                .padding()
+                .foregroundColor(.white)
+            Text("Your Time:")
+                .font(.largeTitle)
+                .foregroundColor(.white)
+                .padding()
+            Text(String(time.rounded())+" Seconds")
+                .font(.largeTitle)
+                .padding()
+                .foregroundColor(.white)
+                .onAppear{time = Date().timeIntervalSince(timeStarted)}
+            Button(action: {
+                endScreenOpen = false
+            }) {
+            Text("Title Screen")
+                .font(.title)
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+            }
+        }
     }
 }
 
