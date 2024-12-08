@@ -685,15 +685,20 @@ struct ContentView: View {
         return 3.0+UIScreen.main.bounds.height/150
     }
     func runBoss3Attack4() -> CGFloat{
-        for index in 0..<30{
-            Timer.scheduledTimer(withTimeInterval: CGFloat(index)/5, repeats: false){
-                _ in
-                let pos = CGPoint(x:CGFloat.random(in:10...UIScreen.main.bounds.width-10),y:-37.5)
-                let missile = BossMissile(position: pos,size: CGSize(width:15,height:75), missileId: 2, rotation: 0, movementMethod: "Forward", missileSpeed: 400.0)
-                bossMissiles.append(missile)
+        for index in 0..<3{
+            let leave  = Int.random(in: 0..<5)
+            for index2 in 0..<5{
+                if (leave != index2){
+                    Timer.scheduledTimer(withTimeInterval: CGFloat(index)*2, repeats: false){
+                        _ in
+                        let pos = CGPoint(x:CGFloat(Double(index2)+0.5)*UIScreen.main.bounds.width/5,y:-37.5)
+                        let missile = BossMissile(position: pos,size: CGSize(width:15,height:75), missileId: 2, rotation: 0, movementMethod: "Forward", missileSpeed: 400.0)
+                        bossMissiles.append(missile)
+                    }
+                }
             }
         }
-        return 6.0+UIScreen.main.bounds.height/400
+        return 9.0+UIScreen.main.bounds.height/400
     }
     func runBoss4Attack1() -> CGFloat{
         var goalPos : CGFloat = pos.y
