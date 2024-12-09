@@ -161,7 +161,7 @@ struct ContentView: View {
                 let bossRect = CGRect(origin: bossPos, size: bossSize).offsetBy(dx: -bossSize.width/2, dy: -bossSize.height/2)
                 if playerRect.intersects(bossRect){
                     playerHealth-=1;
-                    if (playerHealth == 0.0){
+                    if (playerHealth <= 0.0){
                         for timer in loopingTimers{
                             timer.invalidate()
                         }
@@ -177,7 +177,7 @@ struct ContentView: View {
                         let missileRect = CGRect(origin: missile.position, size: missile.size).offsetBy(dx: -missile.size.width/2, dy: -missile.size.height/2)
                         if (playerRect.intersects(missileRect)){
                             playerHealth-=1;
-                            if (playerHealth == 0.0){
+                            if (playerHealth <= 0.0){
                                 for timer in loopingTimers{
                                     timer.invalidate()
                                 }
@@ -230,26 +230,27 @@ struct ContentView: View {
         var missileDamage = 1.0
         var attackSpeed = 1.0
         var cooldown = 1.0
-        var startingCooldown = 1.0
+        var startingCooldown = 0.0
         var missileID: String = "1"
         var movementMethod: String = "Forward"
     }
+    @State private var bonusDamage = 0.0
     @State private var missiles:[Missile] = []
     @State private var attacks:[Attack] = [Attack()]
     @State private var availableAttacks:[Attack] = []
     @State private var initialAttacks:[Attack] = [
-        Attack(posOffset: CGPoint(x:30,y:0),attackSpeed: 4.0),Attack(posOffset: CGPoint(x:-30,y:0),attackSpeed: 4.0),
+        Attack(posOffset: CGPoint(x:30,y:0),attackSpeed: 2.0),Attack(posOffset: CGPoint(x:-30,y:0),attackSpeed: 2.0),
         Attack(size: CGSize(width:40,height:40),missileSpeed: 150.0,missileDamage: 0.04,attackSpeed: 1.5,missileID: "2",movementMethod: "Rotating0"),
-        Attack(rotation: 135,missileSpeed: 200.0,missileDamage: 2.0,missileID: "2",movementMethod: "Slashing225"),
-        Attack(attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:45,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:90,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:135,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:180,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:-45,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:-90,attackSpeed: 8,movementMethod: "Bouncing3"),Attack(rotation:-135,attackSpeed: 8,movementMethod: "Bouncing3"),
+        Attack(rotation: 135,missileSpeed: 200.0,missileDamage: 3.0,missileID: "2",movementMethod: "Slashing225"),
+        Attack(attackSpeed: 6,movementMethod: "Bouncing3"),Attack(rotation:45,attackSpeed: 6,movementMethod: "Bouncing3"),Attack(rotation:90,attackSpeed: 6,movementMethod: "Bouncing3"),Attack(rotation:135,attackSpeed: 6,movementMethod: "Bouncing3"),Attack(rotation:180,attackSpeed: 6,movementMethod: "Bouncing3"),Attack(rotation:-45,attackSpeed: 6,movementMethod: "Bouncing3"),Attack(rotation:-90,attackSpeed: 6,movementMethod: "Bouncing3"),Attack(rotation:-135,attackSpeed: 6,movementMethod: "Bouncing3"),Attack(size: CGSize(width:40,height:40),missileSpeed: 150.0,missileDamage: 0.04,attackSpeed: 1.5,missileID: "2",movementMethod: "Rotating30"),Attack(size: CGSize(width:40,height:40),missileSpeed: 150.0,missileDamage: 0.04,attackSpeed: 1.5,missileID: "2",movementMethod: "Rotating-30")
     ]
     func shoot(){
         loopingTimers.append(Timer.scheduledTimer(withTimeInterval: delay, repeats: true) { _ in
             for index in attacks.indices{
-                attacks[index].cooldown -= delay
+                attacks[index].cooldown -= delay*attackSpeedMultiplier
                 if (attacks[index].cooldown <= 0){
                     let startPos = CGPoint(x:pos.x+attacks[index].posOffset.x,y:pos.y+attacks[index].posOffset.y)
-                    missiles.append(Missile(position: startPos,rotation: attacks[index].rotation,missileSpeed: attacks[index].missileSpeed,missileDamage: attacks[index].missileDamage,missileID: attacks[index].missileID,movementMethod: attacks[index].movementMethod))
+                    missiles.append(Missile(position: startPos,rotation: attacks[index].rotation,missileSpeed: attacks[index].missileSpeed,missileDamage: attacks[index].missileDamage*damageMultiplier,missileID: attacks[index].missileID,movementMethod: attacks[index].movementMethod))
                     attacks[index].cooldown = attacks[index].attackSpeed
                 }
             }
@@ -266,6 +267,21 @@ struct ContentView: View {
             let missileRect = CGRect(origin: missiles[index].position, size: missiles[index].size).offsetBy(dx: -missiles[index].size.width/2, dy: -missiles[index].size.height/2)
             var removed = false
             if (missileRect.intersects(bossRect)){
+                if (missiles[index].missileID == "2"){
+                    playerHealth+=missiles[index].missileDamage*Double(swordLifesteal)/100.0
+                    if (playerHealth > playerMaxHealth){
+                        playerHealth = playerMaxHealth
+                    }
+                }
+                if(missiles[index].missileID == "1"){
+                    bossHealth-=Double(bonusDamage)
+                    let t = missileStacking
+                    bonusDamage+=t
+                    Timer.scheduledTimer(withTimeInterval: 2, repeats: false){
+                        _ in
+                        bonusDamage-=t
+                    }
+                }
                 bossHealth-=missiles[index].missileDamage
                 if (!missiles[index].movementMethod.starts(with: "Rotating")){
                     missiles.remove(at: index)
@@ -289,6 +305,14 @@ struct ContentView: View {
                 }
             }
             if (!removed) {
+                if (missiles[index].missileID == "2" && swordSlashing){
+                    for index2 in bossMissiles.indices.reversed(){
+                        let missileRect2 = CGRect(origin: bossMissiles[index2].position, size: bossMissiles[index2].size).offsetBy(dx: -bossMissiles[index2].size.width/2, dy: -bossMissiles[index2].size.height/2)
+                        if (missileRect.intersects(missileRect2)){
+                            bossMissiles.remove(at: index2)
+                        }
+                    }
+                }
                 if (missiles[index].movementMethod == "Forward"){
                     missiles[index].position.y -= cos(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
                     missiles[index].position.x += sin(missiles[index].rotation * CGFloat.pi / 180) * missiles[index].missileSpeed * delay
@@ -339,6 +363,17 @@ struct ContentView: View {
                         missiles.remove(at: index)
                     }
                 }
+                else if (missiles[index].movementMethod.starts(with: "BSlashing")){
+                    let string = missiles[index].movementMethod.suffix(from: missiles[index].movementMethod.index(missiles[index].movementMethod.startIndex, offsetBy: 9))
+                    let endRotation = Double(string)!
+                    missiles[index].rotation -= missiles[index].missileSpeed * delay
+                    let rotation = missiles[index].rotation
+                    missiles[index].position.y = pos.y + cos(rotation * CGFloat.pi / 180)*50
+                    missiles[index].position.x =  pos.x - sin(rotation * CGFloat.pi / 180)*50
+                    if (missiles[index].rotation <= endRotation){
+                        missiles.remove(at: index)
+                    }
+                }
             }
         }
     }
@@ -355,24 +390,24 @@ struct ContentView: View {
         bossPos = CGPoint(x:UIScreen.main.bounds.width/2,y:100)
         if (bossNum == 1){
             bossSize = CGSize(width:150,height:65)
-            bossHealth = 75.0
-            bossMaxHealth = 75.0
+            bossHealth = 100.0
+            bossMaxHealth = 100.0
         }
         if (bossNum == 2){
             bossSize = CGSize(width:185,height:125)
-            bossHealth = 125.0
-            bossMaxHealth = 125.0
+            bossHealth = 150.0
+            bossMaxHealth = 150.0
         }
         if (bossNum==3){
             bossSize = CGSize(width:125,height:130)
-            bossHealth = 200.0
-            bossMaxHealth = 200.0
+            bossHealth = 225.0
+            bossMaxHealth = 225.0
         }
         if (bossNum == 4){
             bossPos = CGPoint(x:50,y:UIScreen.main.bounds.height/2)
             bossSize = CGSize(width:115,height: 65)
-            bossHealth = 300.0
-            bossMaxHealth = 300.0
+            bossHealth = 350.0
+            bossMaxHealth = 350.0
         }
     }
     //boss attacks
@@ -998,16 +1033,26 @@ struct ContentView: View {
     
     //upgrades
     @State var upgrades: [Int] = [0,0,0]
-    @State var availableUpgrades: [Int] = [0,1,2,3,4,5]
+    @State var availableUpgrades: [Int] = [0,1,2,3,4,5,9]
     func resetEverything(){
-        availableUpgrades = [0,1,2,3,4,5]
+        availableUpgrades = [0,1,2,3,4,5,9]
         availableAttacks = initialAttacks
         attacks = [Attack()]
+        attackSpeedMultiplier = 1
+        damageMultiplier = 1
+        swordGotten = false
+        swordLifesteal = 0
+        swordSlashing = false
+        missileStacking = 0
     }
     func resetUpgrades(){
         upgrades = []
         for _ in 0..<3{
-            upgrades.append(availableUpgrades[Int.random(in: availableUpgrades.indices)])
+            var z = availableUpgrades[Int.random(in: availableUpgrades.indices)]
+            while ((upgrades.firstIndex(of: z)) != nil){
+                z = availableUpgrades[Int.random(in: availableUpgrades.indices)]
+            }
+            upgrades.append(z)
         }
     }
     var upgradeScreen: some View{
@@ -1023,7 +1068,7 @@ struct ContentView: View {
         var text: String = ""
         var color: Color = Color.black
         if (num == 0){
-            text = "Add +2 missiles every 4 attacks."
+            text = "Add +2 missiles every 2 attacks."
             color = Color.blue
         }
         if (num == 1){
@@ -1031,7 +1076,12 @@ struct ContentView: View {
             color = Color.blue
         }
         if (num == 2){
-            text = "Gain a melee sword attack."
+            if (availableAttacks[3].movementMethod == "Slashing225"){
+                text = "Gain a melee sword attack."
+            }
+            else{
+                text = "Gain a backwards melee sword attack."
+            }
             color = Color.blue
         }
         if (num == 3){
@@ -1051,6 +1101,22 @@ struct ContentView: View {
             text = "Attacks deal 50% more damage."
             color = Color.orange
         }
+        if (num==6){
+            text = "Gain two additional spinning swords."
+            color = Color.blue
+        }
+        if (num==7){
+            text = "Swords gain 2% lifesteal. +1 max HP"
+            color = Color.yellow
+        }
+        if (num == 8){
+            text = "Swords can destroy enemy projectiles."
+            color = Color.yellow
+        }
+        if (num==9){
+            text = "Missiles grant +0.5 missile damage for 2 seconds."
+            color = Color.yellow
+        }
         return Button(action: {
             configureUpgrade(num: num)
         }){
@@ -1062,25 +1128,48 @@ struct ContentView: View {
                 .cornerRadius(10)
         }.position(x:UIScreen.main.bounds.width/2,y:(upgrade*2+1)*UIScreen.main.bounds.height/7)
     }
+    @State var swordGotten = false
+    @State var attackSpeedMultiplier = 1.0
+    @State var damageMultiplier = 1.0
+    @State var swordLifesteal = 0
+    @State var swordSlashing = false
+    @State var missileStacking = 0.0
     func configureUpgrade(num: Int){
         if (num == 0){
             attacks.append(availableAttacks[0])
             attacks.append(availableAttacks[1])
-            if (availableAttacks[0].startingCooldown == availableAttacks[0].attackSpeed){
+            if (availableAttacks[0].startingCooldown == 0.5){
                 availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 0)!)
             }
             else{
-                availableAttacks[0].startingCooldown+=availableAttacks[0].attackSpeed/4;
-                availableAttacks[1].startingCooldown+=availableAttacks[1].attackSpeed/4;
+                availableAttacks[0].startingCooldown+=0.5;
+                availableAttacks[1].startingCooldown+=0.5;
             }
         }
         if (num == 1){
             attacks.append(availableAttacks[2])
             availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 1)!)
+            availableUpgrades.append(6)
+            if (!swordGotten){
+                availableUpgrades.append(7)
+                availableUpgrades.append(8)
+                swordGotten = true
+            }
         }
         if (num == 2){
             attacks.append(availableAttacks[3])
-            availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 2)!)
+            if (availableAttacks[3].movementMethod == "Slashing225"){
+                availableAttacks[3].movementMethod = "BSlashing135"
+                availableAttacks[3].rotation = 225
+                if (!swordGotten){
+                    availableUpgrades.append(7)
+                    availableUpgrades.append(8)
+                    swordGotten = true
+                }
+            }
+            else{
+                availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 2)!)
+            }
         }
         if (num == 3){
             for index in 4..<12{
@@ -1096,25 +1185,29 @@ struct ContentView: View {
             }
         }
         if (num == 4){
-            for index in availableAttacks.indices{
-                availableAttacks[index].attackSpeed /= 1.5
-                availableAttacks[index].startingCooldown /= 1.5
-            }
-            for index in attacks.indices{
-                attacks[index].attackSpeed /= 1.5
-                availableAttacks[index].startingCooldown /= 1.5
-            }
+            attackSpeedMultiplier+=0.5
         }
         if (num == 5){
-            for index in availableAttacks.indices{
-                availableAttacks[index].missileDamage *= 1.5
-            }
-            for index in attacks.indices{
-                attacks[index].missileDamage *= 1.5
-            }
+            damageMultiplier+=0.5
+        }
+        if (num == 6){
+            attacks.append(availableAttacks[12])
+            attacks.append(availableAttacks[13])
+            availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 6)!)
+        }
+        if (num == 7){
+            swordLifesteal+=2
+            playerMaxHealth+=1
+        }
+        if (num == 8){
+            swordSlashing = true
+            availableUpgrades.remove(at: availableUpgrades.firstIndex(of: 8)!)
+        }
+        if (num == 9){
+            missileStacking+=0.5
         }
         for index in attacks.indices{
-            attacks[index].cooldown = attacks[index].startingCooldown
+            attacks[index].cooldown = attacks[index].startingCooldown*attacks[index].attackSpeed
         }
         upgradeScreenOpen = false
     }
